@@ -11,15 +11,15 @@ import (
 )
 
 type (
-	// Collector collect log
-	Collector interface {
-		CollectLog() (CollectedLog, error)
+	// Fetcher fetch log
+	Fetcher interface {
+		Fetch() (CollectedLog, error)
 	}
 	// NatureClient nature remo
 	NatureClient struct {
-		client    *natureremo.Client
-		deviceID  string
-		Collector Collector
+		client   *natureremo.Client
+		deviceID string
+		Fetcher  Fetcher
 	}
 )
 
@@ -31,7 +31,7 @@ func NewNatureClient(accessToken, deviceID string) *NatureClient {
 	}
 }
 
-func (c *NatureClient) CollectLog() (CollectedLog, error) {
+func (c *NatureClient) Fetch() (CollectedLog, error) {
 	ctx := context.Background()
 	devices, err := c.client.DeviceService.GetAll(ctx)
 	if err != nil {
