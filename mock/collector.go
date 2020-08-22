@@ -9,40 +9,40 @@ import (
 	reflect "reflect"
 )
 
-// MockCollector is a mock of Collector interface
-type MockCollector struct {
+// MockFetcher is a mock of Fetcher interface
+type MockFetcher struct {
 	ctrl     *gomock.Controller
-	recorder *MockCollectorMockRecorder
+	recorder *MockFetcherMockRecorder
 }
 
-// MockCollectorMockRecorder is the mock recorder for MockCollector
-type MockCollectorMockRecorder struct {
-	mock *MockCollector
+// MockFetcherMockRecorder is the mock recorder for MockFetcher
+type MockFetcherMockRecorder struct {
+	mock *MockFetcher
 }
 
-// NewMockCollector creates a new mock instance
-func NewMockCollector(ctrl *gomock.Controller) *MockCollector {
-	mock := &MockCollector{ctrl: ctrl}
-	mock.recorder = &MockCollectorMockRecorder{mock}
+// NewMockFetcher creates a new mock instance
+func NewMockFetcher(ctrl *gomock.Controller) *MockFetcher {
+	mock := &MockFetcher{ctrl: ctrl}
+	mock.recorder = &MockFetcherMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use
-func (m *MockCollector) EXPECT() *MockCollectorMockRecorder {
+func (m *MockFetcher) EXPECT() *MockFetcherMockRecorder {
 	return m.recorder
 }
 
-// CollectLog mocks base method
-func (m *MockCollector) CollectLog() (CollectedLog, error) {
+// Fetch mocks base method
+func (m *MockFetcher) Fetch() (CollectedLog, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CollectLog")
+	ret := m.ctrl.Call(m, "Fetch")
 	ret0, _ := ret[0].(CollectedLog)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// CollectLog indicates an expected call of CollectLog
-func (mr *MockCollectorMockRecorder) CollectLog() *gomock.Call {
+// Fetch indicates an expected call of Fetch
+func (mr *MockFetcherMockRecorder) Fetch() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CollectLog", reflect.TypeOf((*MockCollector)(nil).CollectLog))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Fetch", reflect.TypeOf((*MockFetcher)(nil).Fetch))
 }
