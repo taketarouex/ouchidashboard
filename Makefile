@@ -1,4 +1,10 @@
-.PHONY: generate
+.PHONY: generate tidy test
 
 generate:
-	go generate ./internal
+	go generate
+
+tidy:
+	go mod tidy
+
+test:
+	go test

@@ -1,23 +1,19 @@
 package main
 
 import (
-	"context"
 	"log"
 	"os"
 
-	"github.com/tenntenn/natureremo"
+	ouchidashboard "github.com/tktkc72/ouchi-dashboard"
 )
 
 func main() {
 	accessToken := os.Getenv("ACCESS_TOKEN")
-	cli := natureremo.NewClient(accessToken)
-	ctx := context.Background()
-
-	devices, err := cli.DeviceService.GetAll(ctx)
+	deviceID := os.Getenv("DEVICE_ID")
+	collector := ouchidashboard.NewNatureClient(accessToken, deviceID)
+	collectedLog, err := collector.CollectLog()
 	if err != nil {
 		log.Fatal(err)
 	}
-	for _, d := range devices {
-		log.Printf("%v", d)
-	}
+	log.Printf("temp:%v", collectedLog.TemperatureLog.Value)
 }
