@@ -8,3 +8,6 @@ tidy:
 
 test:
 	go test
+
+build:
+	go build cmd/main.go
