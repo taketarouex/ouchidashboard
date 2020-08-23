@@ -1,4 +1,4 @@
-.PHONY: generate tidy test
+.PHONY: generate tidy test build
 
 generate:
 	go generate

@@ -9,40 +9,114 @@ import (
 	reflect "reflect"
 )
 
-// MockFetcher is a mock of Fetcher interface
-type MockFetcher struct {
+// MockICollector is a mock of ICollector interface
+type MockICollector struct {
 	ctrl     *gomock.Controller
-	recorder *MockFetcherMockRecorder
+	recorder *MockICollectorMockRecorder
 }
 
-// MockFetcherMockRecorder is the mock recorder for MockFetcher
-type MockFetcherMockRecorder struct {
-	mock *MockFetcher
+// MockICollectorMockRecorder is the mock recorder for MockICollector
+type MockICollectorMockRecorder struct {
+	mock *MockICollector
 }
 
-// NewMockFetcher creates a new mock instance
-func NewMockFetcher(ctrl *gomock.Controller) *MockFetcher {
-	mock := &MockFetcher{ctrl: ctrl}
-	mock.recorder = &MockFetcherMockRecorder{mock}
+// NewMockICollector creates a new mock instance
+func NewMockICollector(ctrl *gomock.Controller) *MockICollector {
+	mock := &MockICollector{ctrl: ctrl}
+	mock.recorder = &MockICollectorMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use
-func (m *MockFetcher) EXPECT() *MockFetcherMockRecorder {
+func (m *MockICollector) EXPECT() *MockICollectorMockRecorder {
 	return m.recorder
 }
 
-// Fetch mocks base method
-func (m *MockFetcher) Fetch() (CollectedLog, error) {
+// Collect mocks base method
+func (m *MockICollector) Collect() error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Fetch")
-	ret0, _ := ret[0].(CollectedLog)
+	ret := m.ctrl.Call(m, "Collect")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Collect indicates an expected call of Collect
+func (mr *MockICollectorMockRecorder) Collect() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Collect", reflect.TypeOf((*MockICollector)(nil).Collect))
+}
+
+// MockIRepository is a mock of IRepository interface
+type MockIRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockIRepositoryMockRecorder
+}
+
+// MockIRepositoryMockRecorder is the mock recorder for MockIRepository
+type MockIRepositoryMockRecorder struct {
+	mock *MockIRepository
+}
+
+// NewMockIRepository creates a new mock instance
+func NewMockIRepository(ctrl *gomock.Controller) *MockIRepository {
+	mock := &MockIRepository{ctrl: ctrl}
+	mock.recorder = &MockIRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockIRepository) EXPECT() *MockIRepositoryMockRecorder {
+	return m.recorder
+}
+
+// add mocks base method
+func (m *MockIRepository) add(arg0 collectedLog) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "add", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// add indicates an expected call of add
+func (mr *MockIRepositoryMockRecorder) add(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "add", reflect.TypeOf((*MockIRepository)(nil).add), arg0)
+}
+
+// MockIFetcher is a mock of IFetcher interface
+type MockIFetcher struct {
+	ctrl     *gomock.Controller
+	recorder *MockIFetcherMockRecorder
+}
+
+// MockIFetcherMockRecorder is the mock recorder for MockIFetcher
+type MockIFetcherMockRecorder struct {
+	mock *MockIFetcher
+}
+
+// NewMockIFetcher creates a new mock instance
+func NewMockIFetcher(ctrl *gomock.Controller) *MockIFetcher {
+	mock := &MockIFetcher{ctrl: ctrl}
+	mock.recorder = &MockIFetcherMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockIFetcher) EXPECT() *MockIFetcherMockRecorder {
+	return m.recorder
+}
+
+// fetch mocks base method
+func (m *MockIFetcher) fetch() (collectedLog, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "fetch")
+	ret0, _ := ret[0].(collectedLog)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// Fetch indicates an expected call of Fetch
-func (mr *MockFetcherMockRecorder) Fetch() *gomock.Call {
+// fetch indicates an expected call of fetch
+func (mr *MockIFetcherMockRecorder) fetch() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Fetch", reflect.TypeOf((*MockFetcher)(nil).Fetch))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "fetch", reflect.TypeOf((*MockIFetcher)(nil).fetch))
 }

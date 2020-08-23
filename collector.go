@@ -11,31 +11,56 @@ import (
 )
 
 type (
-	// Fetcher fetch log
-	Fetcher interface {
-		Fetch() (CollectedLog, error)
+	ICollector interface {
+		Collect() error
 	}
-	// NatureClient nature remo
-	NatureClient struct {
-		client   *natureremo.Client
-		deviceID string
-		Fetcher  Fetcher
+	// CollectorSevice service
+	CollectorSevice struct {
+		fetcher    Fetcher
+		repository Repository
 	}
 )
 
-func NewNatureClient(accessToken, deviceID string) *NatureClient {
+type (
+	IRepository interface {
+		add(collectedLog) error
+	}
+	Repository struct {
+	}
+)
+
+func NewRepository() IRepository {
+	return &Repository{}
+}
+
+func (*Repository) add(collected collectedLog) error {
+	return nil
+}
+
+type (
+	IFetcher interface {
+		fetch() (collectedLog, error)
+	}
+	Fetcher struct {
+		client   *natureremo.Client
+		deviceID string
+	}
+)
+
+// NewFetcher creates Fetcher
+func NewFetcher(accessToken, deviceID string) IFetcher {
 	cli := natureremo.NewClient(accessToken)
-	return &NatureClient{
+	return &Fetcher{
 		client:   cli,
 		deviceID: deviceID,
 	}
 }
 
-func (c *NatureClient) Fetch() (CollectedLog, error) {
+func (c *Fetcher) fetch() (collectedLog, error) {
 	ctx := context.Background()
 	devices, err := c.client.DeviceService.GetAll(ctx)
 	if err != nil {
-		return CollectedLog{}, err
+		return collectedLog{}, err
 	}
 
 	var device *natureremo.Device
@@ -49,35 +74,34 @@ func (c *NatureClient) Fetch() (CollectedLog, error) {
 		log.Fatalf("not found deviceID: %s", c.deviceID)
 	}
 
-	return CollectedLog{
-		Log{
+	return collectedLog{
+		historyLog{
 			device.NewestEvents[natureremo.SensorTypeTemperature].Value,
 			device.NewestEvents[natureremo.SensorTypeTemperature].CreatedAt,
 		},
-		Log{
+		historyLog{
 			device.NewestEvents[natureremo.SensorTypeHumidity].Value,
 			device.NewestEvents[natureremo.SensorTypeHumidity].CreatedAt,
 		},
-		Log{
+		historyLog{
 			device.NewestEvents[natureremo.SensortypeIllumination].Value,
 			device.NewestEvents[natureremo.SensortypeIllumination].CreatedAt,
 		},
-		Log{
+		historyLog{
 			device.NewestEvents[natureremo.SensorType("mo")].Value,
 			device.NewestEvents[natureremo.SensorType("mo")].CreatedAt,
 		},
 	}, nil
 }
 
-type Log struct {
+type historyLog struct {
 	Value     float64
 	UpdatedAt time.Time
 }
 
-// CollectedLog collected log
-type CollectedLog struct {
-	TemperatureLog  Log
-	HumidityLog     Log
-	IlluminationLog Log
-	MotionLog       Log
+type collectedLog struct {
+	temperatureLog  historyLog
+	humidityLog     historyLog
+	illuminationLog historyLog
+	motionLog       historyLog
 }

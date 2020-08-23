@@ -10,8 +10,8 @@ import (
 func main() {
 	accessToken := os.Getenv("ACCESS_TOKEN")
 	deviceID := os.Getenv("DEVICE_ID")
-	collector := ouchidashboard.NewNatureClient(accessToken, deviceID)
-	collectedLog, err := collector.CollectLog()
+	fetcher := ouchidashboard.NewFetcher(accessToken, deviceID)
+	collectedLog, err := fetcher.Fetch()
 	if err != nil {
 		log.Fatal(err)
 	}
