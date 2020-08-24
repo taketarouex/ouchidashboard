@@ -16,16 +16,29 @@ type (
 	}
 	// CollectorSevice service
 	CollectorSevice struct {
-		fetcher    Fetcher
-		repository Repository
+		fetcher    IFetcher
+		repository IRepository
 	}
 )
 
 func NewCollectorService(fetcher IFetcher, repository IRepository) ICollector {
-	return &CollectorSevice{}
+	return &CollectorSevice{
+		fetcher:    fetcher,
+		repository: repository,
+	}
 }
 
-func (*CollectorSevice) Collect() error {
+func (s *CollectorSevice) Collect() error {
+	collected, err := s.fetcher.fetch()
+	if err != nil {
+		return err
+	}
+
+	err = s.repository.add(collected)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -64,22 +77,22 @@ func NewFetcher(accessToken, deviceID string) IFetcher {
 	}
 }
 
-func (c *Fetcher) fetch() (CollectedLog, error) {
+func (f *Fetcher) fetch() (CollectedLog, error) {
 	ctx := context.Background()
-	devices, err := c.client.DeviceService.GetAll(ctx)
+	devices, err := f.client.DeviceService.GetAll(ctx)
 	if err != nil {
 		return CollectedLog{}, err
 	}
 
 	var device *natureremo.Device
 	for _, d := range devices {
-		if d.ID == c.deviceID {
+		if d.ID == f.deviceID {
 			device = d
 			break
 		}
 	}
 	if device == nil {
-		log.Fatalf("not found deviceID: %s", c.deviceID)
+		log.Fatalf("not found deviceID: %s", f.deviceID)
 	}
 
 	return CollectedLog{
