@@ -1,6 +1,6 @@
-//go:generate mockgen -source=$GOFILE -destination=mock/$GOFILE -package=$GOPACKAGE
+//go:generate mockgen -source=$GOFILE -destination=collector_mock.go -package=$GOPACKAGE -self_package=github.com/tktkc72/ouchi-dashboard
 
-package ouchidashboard
+package collector
 
 import (
 	"context"
@@ -21,9 +21,17 @@ type (
 	}
 )
 
+func NewCollectorService(fetcher IFetcher, repository IRepository) ICollector {
+	return &CollectorSevice{}
+}
+
+func (*CollectorSevice) Collect() error {
+	return nil
+}
+
 type (
 	IRepository interface {
-		add(collectedLog) error
+		add(CollectedLog) error
 	}
 	Repository struct {
 	}
@@ -33,13 +41,13 @@ func NewRepository() IRepository {
 	return &Repository{}
 }
 
-func (*Repository) add(collected collectedLog) error {
+func (*Repository) add(collected CollectedLog) error {
 	return nil
 }
 
 type (
 	IFetcher interface {
-		fetch() (collectedLog, error)
+		fetch() (CollectedLog, error)
 	}
 	Fetcher struct {
 		client   *natureremo.Client
@@ -56,11 +64,11 @@ func NewFetcher(accessToken, deviceID string) IFetcher {
 	}
 }
 
-func (c *Fetcher) fetch() (collectedLog, error) {
+func (c *Fetcher) fetch() (CollectedLog, error) {
 	ctx := context.Background()
 	devices, err := c.client.DeviceService.GetAll(ctx)
 	if err != nil {
-		return collectedLog{}, err
+		return CollectedLog{}, err
 	}
 
 	var device *natureremo.Device
@@ -74,7 +82,7 @@ func (c *Fetcher) fetch() (collectedLog, error) {
 		log.Fatalf("not found deviceID: %s", c.deviceID)
 	}
 
-	return collectedLog{
+	return CollectedLog{
 		historyLog{
 			device.NewestEvents[natureremo.SensorTypeTemperature].Value,
 			device.NewestEvents[natureremo.SensorTypeTemperature].CreatedAt,
@@ -99,7 +107,7 @@ type historyLog struct {
 	UpdatedAt time.Time
 }
 
-type collectedLog struct {
+type CollectedLog struct {
 	temperatureLog  historyLog
 	humidityLog     historyLog
 	illuminationLog historyLog
