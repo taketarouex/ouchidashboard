@@ -11,7 +11,7 @@ func TestCollector(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	collectedLog := CollectedLog{
+	collectedLog := CollectLog{
 		historyLog{0, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local)},
 		historyLog{1, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local)},
 		historyLog{2, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local)},

@@ -70,7 +70,7 @@ func (m *MockIRepository) EXPECT() *MockIRepositoryMockRecorder {
 }
 
 // add mocks base method
-func (m *MockIRepository) add(arg0 CollectedLog) error {
+func (m *MockIRepository) add(arg0 CollectLog) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "add", arg0)
 	ret0, _ := ret[0].(error)
@@ -107,10 +107,10 @@ func (m *MockIFetcher) EXPECT() *MockIFetcherMockRecorder {
 }
 
 // fetch mocks base method
-func (m *MockIFetcher) fetch() (CollectedLog, error) {
+func (m *MockIFetcher) fetch() (CollectLog, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "fetch")
-	ret0, _ := ret[0].(CollectedLog)
+	ret0, _ := ret[0].(CollectLog)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
