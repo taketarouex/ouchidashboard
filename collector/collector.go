@@ -7,6 +7,7 @@ import (
 	"log"
 	"time"
 
+	"cloud.google.com/go/firestore"
 	"github.com/tenntenn/natureremo"
 )
 
@@ -47,14 +48,35 @@ type (
 		add(CollectLog) error
 	}
 	Repository struct {
+		document *firestore.DocumentRef
 	}
 )
 
-func NewRepository() IRepository {
-	return &Repository{}
+func NewRepository(client *firestore.Client, document string) IRepository {
+	return &Repository{
+		document: client.Doc(document),
+	}
 }
 
-func (*Repository) add(collected CollectLog) error {
+func (r *Repository) add(collected CollectLog) error {
+	ctx := context.Background()
+	_, _, err := r.document.Collection("temperature").Add(ctx, collected.temperatureLog)
+	if err != nil {
+		return err
+	}
+	_, _, err = r.document.Collection("humidity").Add(ctx, collected.humidityLog)
+	if err != nil {
+		return err
+	}
+	_, _, err = r.document.Collection("illumination").Add(ctx, collected.illuminationLog)
+	if err != nil {
+		return err
+	}
+	_, _, err = r.document.Collection("motion").Add(ctx, collected.motionLog)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -69,10 +91,9 @@ type (
 )
 
 // NewFetcher creates Fetcher
-func NewFetcher(accessToken, deviceID string) IFetcher {
-	cli := natureremo.NewClient(accessToken)
+func NewFetcher(client *natureremo.Client, deviceID string) IFetcher {
 	return &Fetcher{
-		client:   cli,
+		client:   client,
 		deviceID: deviceID,
 	}
 }
