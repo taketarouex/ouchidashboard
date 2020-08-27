@@ -24,6 +24,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed get firestore client due to: %v", err)
 	}
+	defer firestoreClient.Close()
 	repository := collector.NewRepository(firestoreClient, documentPath)
 
 	service := collector.NewCollectorService(fetcher, repository)

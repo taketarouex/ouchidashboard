@@ -11,3 +11,6 @@ test:
 
 build:
 	go build cmd/main.go
+
+integration_test:
+	go test --tags=integration ./collector
