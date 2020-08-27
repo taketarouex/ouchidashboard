@@ -15,3 +15,13 @@ GCP_BigQuery(bar, "Data Processing")
 foo -> bar
 
 @enduml
+
+## Test
+
+### Unit Test
+
+`make test`
+
+### Integration Test
+
+`GCP_PROJECT=[GCP_PROJECT] FIRESTORE_DOC_PATH=[FIRESTORE_DOC_PATH] make integration_test`
