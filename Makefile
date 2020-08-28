@@ -10,7 +10,7 @@ test:
 	go test ./collector
 
 build:
-	go build cmd/main.go
+	go build -o build/. cmd/collector.go
 
 integration_test:
 	go test --tags=integration ./collector
