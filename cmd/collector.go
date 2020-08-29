@@ -23,8 +23,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func collect() error {
-	accessToken := os.Getenv("ACCESS_TOKEN")
-	deviceID := os.Getenv("DEVICE_ID")
+	accessToken := os.Getenv("NATURE_REMO_ACCESS_TOKEN")
+	deviceID := os.Getenv("NATURE_REMO_DEVICE_ID")
 	projectID := os.Getenv("GCP_PROJECT")
 	documentPath := os.Getenv("FIRESTORE_DOC_PATH")
 

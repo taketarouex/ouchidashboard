@@ -1,0 +1,10 @@
+FROM google/cloud-sdk:alpine
+
+RUN apk add --update --no-cache openjdk8 \
+    && gcloud components update \
+    && gcloud components install cloud-firestore-emulator beta --quiet
+
+EXPOSE 8812
+
+CMD [ "/google-cloud-sdk/platform/cloud-firestore-emulator/cloud_firestore_emulator",\
+    "start", "--host=0.0.0.0", "--port=8812" ]

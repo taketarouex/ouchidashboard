@@ -13,4 +13,6 @@ FROM alpine:3
 
 COPY --from=builder /app/build/collector /collector
 
+EXPOSE $PORT
+
 CMD ["/collector"]
