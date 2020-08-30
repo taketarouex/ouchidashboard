@@ -2,19 +2,10 @@
 
 display and store data related to `ouchi` life.
 
-## diagram
+## Description
 
-@startuml
-!include ./common.puml
-!include ./GCP Icons/Products & Services/Storage & Databases/Cloud Bigtable.puml
-!include ./GCP Icons/Products & Services/Big Data/BigQuery.puml
-
-GCP_CloudBigtable(foo, "My BigTable")
-GCP_BigQuery(bar, "Data Processing")
-
-foo -> bar
-
-@enduml
+This collects data related `ouchi` life from `nature remo`
+and store them in `Firestore`
 
 ## Test
 
@@ -24,4 +15,12 @@ foo -> bar
 
 ### Integration Test
 
-`GCP_PROJECT=[GCP_PROJECT] FIRESTORE_DOC_PATH=[FIRESTORE_DOC_PATH] make integration_test`
+`docker-compose run --service-ports -d firestore`
+
+`FIRESTORE_EMULATOR_HOST=localhost:8812 GCP_PROJECT="test" FIRESTORE_DOC_PATH="test" make integration_test`
+
+## CI
+
+### test
+
+[github actions](..github/workflows/test.yml)
