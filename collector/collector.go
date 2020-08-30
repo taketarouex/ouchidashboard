@@ -4,7 +4,7 @@ package collector
 
 import (
 	"context"
-	"log"
+	"fmt"
 	"time"
 
 	"cloud.google.com/go/firestore"
@@ -24,10 +24,10 @@ type (
 	logType int
 
 	collectLog struct {
-		value     float64
-		updatedAt time.Time
-		logType   logType
-		sourceId  string
+		Value     float64
+		UpdatedAt time.Time
+		LogType   logType
+		SourceID  string
 	}
 )
 
@@ -92,7 +92,7 @@ func NewRepository(client *firestore.Client, document string) IRepository {
 func (r *Repository) add(collectLogs []collectLog) error {
 	ctx := context.Background()
 	for _, c := range collectLogs {
-		_, _, err := r.document.Collection(c.logType.String()).Add(ctx, c)
+		_, _, err := r.document.Collection(c.LogType.String()).Add(ctx, c)
 		if err != nil {
 			return err
 		}
@@ -109,7 +109,25 @@ type (
 		client   *natureremo.Client
 		deviceID string
 	}
+	deviceSlice []*natureremo.Device
 )
+
+func (rcv deviceSlice) where(fn func(*natureremo.Device) bool) (result deviceSlice) {
+	for _, v := range rcv {
+		if fn(v) {
+			result = append(result, v)
+		}
+	}
+	return result
+}
+
+func (rcv deviceSlice) fetchLog() []collectLog {
+	var collectLogs []collectLog
+	for _, d := range rcv {
+		collectLogs = append(collectLogs, parseNatureremoDevice(d)...)
+	}
+	return collectLogs
+}
 
 // NewFetcher creates Fetcher
 func NewFetcher(client *natureremo.Client, deviceID string) IFetcher {
@@ -150,21 +168,19 @@ func parseNatureremoDevice(d *natureremo.Device) []collectLog {
 
 func (f *Fetcher) fetch() ([]collectLog, error) {
 	ctx := context.Background()
+	var devices deviceSlice
 	devices, err := f.client.DeviceService.GetAll(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	var device *natureremo.Device
-	for _, d := range devices {
-		if d.ID == f.deviceID {
-			device = d
-			break
-		}
+	targetDevice := devices.where(func(d *natureremo.Device) bool {
+		return d.ID == f.deviceID
+	})
+	if targetDevice == nil {
+		return nil, fmt.Errorf("no found deviceID:%v", f.deviceID)
 	}
-	if device == nil {
-		log.Fatalf("not found deviceID: %s", f.deviceID)
-	}
+	collectLogs := targetDevice.fetchLog()
 
-	return parseNatureremoDevice(device), nil
+	return collectLogs, nil
 }
