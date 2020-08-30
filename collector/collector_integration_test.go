@@ -29,5 +29,8 @@ func TestRepository(t *testing.T) {
 		historyLog{2, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local)},
 		historyLog{3, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local)},
 	}
-	repository.add(collected)
+	err = repository.add(collected)
+	if err != nil {
+		t.Errorf("error: %v", err)
+	}
 }

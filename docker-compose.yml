@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+    firestore:
+        build:
+            dockerfile: Dockerfile.firestore_emulator
+            context: .
+        ports:
+            - "8812:8812"
+        expose: 
+            - "8812"
