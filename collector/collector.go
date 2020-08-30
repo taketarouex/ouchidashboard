@@ -20,6 +20,37 @@ type (
 		fetcher    IFetcher
 		repository IRepository
 	}
+
+	logType int
+
+	collectLog struct {
+		value     float64
+		updatedAt time.Time
+		logType   logType
+		sourceId  string
+	}
+)
+
+func (t logType) String() string {
+	switch t {
+	case temperature:
+		return "temperature"
+	case humidity:
+		return "humidity"
+	case illumination:
+		return "illumination"
+	case motion:
+		return "motion"
+	default:
+		return "Unknown"
+	}
+}
+
+const (
+	temperature = iota
+	humidity
+	illumination
+	motion
 )
 
 func NewCollectorService(fetcher IFetcher, repository IRepository) ICollector {
@@ -45,7 +76,7 @@ func (s *CollectorSevice) Collect() error {
 
 type (
 	IRepository interface {
-		add(CollectLog) error
+		add([]collectLog) error
 	}
 	Repository struct {
 		document *firestore.DocumentRef
@@ -58,23 +89,13 @@ func NewRepository(client *firestore.Client, document string) IRepository {
 	}
 }
 
-func (r *Repository) add(collected CollectLog) error {
+func (r *Repository) add(collectLogs []collectLog) error {
 	ctx := context.Background()
-	_, _, err := r.document.Collection("temperature").Add(ctx, collected.temperatureLog)
-	if err != nil {
-		return err
-	}
-	_, _, err = r.document.Collection("humidity").Add(ctx, collected.humidityLog)
-	if err != nil {
-		return err
-	}
-	_, _, err = r.document.Collection("illumination").Add(ctx, collected.illuminationLog)
-	if err != nil {
-		return err
-	}
-	_, _, err = r.document.Collection("motion").Add(ctx, collected.motionLog)
-	if err != nil {
-		return err
+	for _, c := range collectLogs {
+		_, _, err := r.document.Collection(c.logType.String()).Add(ctx, c)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -82,7 +103,7 @@ func (r *Repository) add(collected CollectLog) error {
 
 type (
 	IFetcher interface {
-		fetch() (CollectLog, error)
+		fetch() ([]collectLog, error)
 	}
 	Fetcher struct {
 		client   *natureremo.Client
@@ -98,11 +119,40 @@ func NewFetcher(client *natureremo.Client, deviceID string) IFetcher {
 	}
 }
 
-func (f *Fetcher) fetch() (CollectLog, error) {
+func parseNatureremoDevice(d *natureremo.Device) []collectLog {
+	return []collectLog{
+		{
+			d.NewestEvents[natureremo.SensorTypeTemperature].Value,
+			d.NewestEvents[natureremo.SensorTypeTemperature].CreatedAt,
+			temperature,
+			d.ID,
+		},
+		{
+			d.NewestEvents[natureremo.SensorTypeHumidity].Value,
+			d.NewestEvents[natureremo.SensorTypeHumidity].CreatedAt,
+			humidity,
+			d.ID,
+		},
+		{
+			d.NewestEvents[natureremo.SensortypeIllumination].Value,
+			d.NewestEvents[natureremo.SensortypeIllumination].CreatedAt,
+			illumination,
+			d.ID,
+		},
+		{
+			d.NewestEvents[natureremo.SensorType("mo")].Value,
+			d.NewestEvents[natureremo.SensorType("mo")].CreatedAt,
+			motion,
+			d.ID,
+		},
+	}
+}
+
+func (f *Fetcher) fetch() ([]collectLog, error) {
 	ctx := context.Background()
 	devices, err := f.client.DeviceService.GetAll(ctx)
 	if err != nil {
-		return CollectLog{}, err
+		return nil, err
 	}
 
 	var device *natureremo.Device
@@ -116,34 +166,5 @@ func (f *Fetcher) fetch() (CollectLog, error) {
 		log.Fatalf("not found deviceID: %s", f.deviceID)
 	}
 
-	return CollectLog{
-		historyLog{
-			device.NewestEvents[natureremo.SensorTypeTemperature].Value,
-			device.NewestEvents[natureremo.SensorTypeTemperature].CreatedAt,
-		},
-		historyLog{
-			device.NewestEvents[natureremo.SensorTypeHumidity].Value,
-			device.NewestEvents[natureremo.SensorTypeHumidity].CreatedAt,
-		},
-		historyLog{
-			device.NewestEvents[natureremo.SensortypeIllumination].Value,
-			device.NewestEvents[natureremo.SensortypeIllumination].CreatedAt,
-		},
-		historyLog{
-			device.NewestEvents[natureremo.SensorType("mo")].Value,
-			device.NewestEvents[natureremo.SensorType("mo")].CreatedAt,
-		},
-	}, nil
-}
-
-type historyLog struct {
-	Value     float64
-	UpdatedAt time.Time
-}
-
-type CollectLog struct {
-	temperatureLog  historyLog
-	humidityLog     historyLog
-	illuminationLog historyLog
-	motionLog       historyLog
+	return parseNatureremoDevice(device), nil
 }
