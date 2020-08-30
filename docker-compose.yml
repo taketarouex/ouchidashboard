@@ -1,6 +1,15 @@
 version: "3.8"
 
 services:
+    app:
+        build: .
+        ports:
+            - "8080:8080"
+        environment:
+            - PORT=8080
+            - GCP_PROJECT
+            - NATURE_REMO_ACCESS_TOKEN
+            - FIRESTORE_DOC_PATH
     firestore:
         build:
             dockerfile: Dockerfile.firestore_emulator

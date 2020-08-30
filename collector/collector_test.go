@@ -11,17 +11,17 @@ func TestCollector(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	collectedLog := CollectLog{
-		historyLog{0, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local)},
-		historyLog{1, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local)},
-		historyLog{2, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local)},
-		historyLog{3, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local)},
+	collectLogs := []collectLog{
+		{0, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), temperature, "test"},
+		{1, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), humidity, "test"},
+		{2, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), illumination, "test"},
+		{3, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), motion, "test"},
 	}
 	fetcher := NewMockIFetcher(ctrl)
-	fetcher.EXPECT().fetch().Return(collectedLog, nil)
+	fetcher.EXPECT().fetch().Return(collectLogs, nil)
 
 	repository := NewMockIRepository(ctrl)
-	repository.EXPECT().add(collectedLog).Return(nil)
+	repository.EXPECT().add(collectLogs).Return(nil)
 	service := NewCollectorService(fetcher, repository)
 	service.Collect()
 }

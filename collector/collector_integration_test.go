@@ -23,13 +23,13 @@ func TestRepository(t *testing.T) {
 	defer client.Close()
 
 	repository := NewRepository(client, documentPath)
-	collected := CollectLog{
-		historyLog{0, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local)},
-		historyLog{1, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local)},
-		historyLog{2, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local)},
-		historyLog{3, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local)},
+	collectLogs := []collectLog{
+		{0, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), temperature, "test"},
+		{1, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), humidity, "test"},
+		{2, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), illumination, "test"},
+		{3, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), motion, "test"},
 	}
-	err = repository.add(collected)
+	err = repository.add(collectLogs)
 	if err != nil {
 		t.Errorf("error: %v", err)
 	}

@@ -24,3 +24,7 @@ and store them in `Firestore`
 ### test
 
 [github actions](..github/workflows/test.yml)
+
+## CD
+
+[Continuous deployment from Git using Cloud Build](https://cloud.google.com/run/docs/continuous-deployment-with-cloud-build?hl=ja#new-service)
