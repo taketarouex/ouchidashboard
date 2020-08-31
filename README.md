@@ -28,3 +28,9 @@ and store them in `Firestore`
 ## CD
 
 [Continuous deployment from Git using Cloud Build](https://cloud.google.com/run/docs/continuous-deployment-with-cloud-build?hl=ja#new-service)
+
+## Todo
+
+- [ ] e2e test
+- [ ] bad request
+- [ ] code ci from github
