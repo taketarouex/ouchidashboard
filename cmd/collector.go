@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -12,29 +14,55 @@ import (
 	"github.com/tktkc72/ouchi-dashboard/collector"
 )
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	err := collect()
-	if err != nil {
-		log.Printf("%v", err)
-		status := http.StatusInternalServerError
-		text := http.StatusText(status)
-		http.Error(w, fmt.Sprintf("%s", text), status)
-	}
+type message struct {
+	DeviceIDs []string `json:"deviceIDs"`
 }
 
-func collect() error {
+func handler(w http.ResponseWriter, r *http.Request) {
 	accessToken := os.Getenv("NATURE_REMO_ACCESS_TOKEN")
-	deviceID := os.Getenv("NATURE_REMO_DEVICE_ID")
 	projectID := os.Getenv("GCP_PROJECT")
 	documentPath := os.Getenv("FIRESTORE_DOC_PATH")
 
+	var m message
+	b, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	if err != nil {
+		log.Printf("ioutil.ReadAll: %v", err)
+		http.Error(w, "Bad Request", http.StatusBadRequest)
+		return
+	}
+	if err := json.Unmarshal(b, &m); err != nil {
+		log.Printf("json.Unmarshal: %v", err)
+		http.Error(w, "Bad Request", http.StatusBadRequest)
+		return
+	}
+
+	errorChannel := make(chan error, len(m.DeviceIDs))
+	for _, deviceID := range m.DeviceIDs {
+		go collect(accessToken, deviceID, projectID, documentPath, errorChannel)
+	}
+	collectError := false
+	for range m.DeviceIDs {
+		err := <-errorChannel
+		if err != nil {
+			log.Printf("collect: %v", err)
+			collectError = true
+		}
+	}
+	if collectError {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
+}
+
+func collect(accessToken, deviceID, projectID, documentPath string, c chan error) {
 	natureremoClient := natureremo.NewClient(accessToken)
 	fetcher := collector.NewFetcher(natureremoClient, deviceID)
 
 	ctx := context.Background()
 	firestoreClient, err := firestore.NewClient(ctx, projectID)
 	if err != nil {
-		return err
+		c <- err
+		return
 	}
 	defer firestoreClient.Close()
 	repository := collector.NewRepository(firestoreClient, documentPath)
@@ -42,9 +70,10 @@ func collect() error {
 	service := collector.NewCollectorService(fetcher, repository)
 	err = service.Collect()
 	if err != nil {
-		return err
+		c <- err
+		return
 	}
-	return nil
+	c <- nil
 }
 
 func main() {
