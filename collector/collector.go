@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"cloud.google.com/go/firestore"
+	"github.com/pkg/errors"
 	"github.com/tenntenn/natureremo"
 )
 
@@ -166,6 +167,23 @@ func parseNatureremoDevice(d *natureremo.Device) []collectLog {
 	}
 }
 
+type noDevice interface {
+	noDevice() bool
+}
+
+func IsNoDevice(err error) bool {
+	no, ok := errors.Cause(err).(noDevice)
+	return ok && no.noDevice()
+}
+
+type noDeviceErr struct {
+	s string
+}
+
+func (e *noDeviceErr) Error() string { return e.s }
+
+func (e *noDeviceErr) noDevice() bool { return true }
+
 func (f *Fetcher) fetch() ([]collectLog, error) {
 	ctx := context.Background()
 	var devices deviceSlice
@@ -178,7 +196,7 @@ func (f *Fetcher) fetch() ([]collectLog, error) {
 		return d.ID == f.deviceID
 	})
 	if targetDevice == nil {
-		return nil, fmt.Errorf("no found deviceID:%v", f.deviceID)
+		return nil, &noDeviceErr{fmt.Sprintf("no device id: %s", f.deviceID)}
 	}
 	collectLogs := targetDevice.fetchLog()
 
