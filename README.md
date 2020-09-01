@@ -32,5 +32,5 @@ and store them in `Firestore`
 ## Todo
 
 - [ ] e2e test
-- [ ] bad request
+- [x] bad request
 - [ ] code ci from github

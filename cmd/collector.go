@@ -41,16 +41,18 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	for _, deviceID := range m.DeviceIDs {
 		go collect(accessToken, deviceID, projectID, documentPath, errorChannel)
 	}
-	collectError := false
 	for range m.DeviceIDs {
 		err := <-errorChannel
 		if err != nil {
 			log.Printf("collect: %v", err)
-			collectError = true
+			if collector.IsNoDevice(err) {
+				http.Error(w,
+					"Bad Request",
+					http.StatusBadRequest)
+			} else {
+				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			}
 		}
-	}
-	if collectError {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
 }
 
