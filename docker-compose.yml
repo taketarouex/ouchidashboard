@@ -10,6 +10,9 @@ services:
             - GCP_PROJECT
             - NATURE_REMO_ACCESS_TOKEN
             - FIRESTORE_DOC_PATH
+            - FIRESTORE_EMULATOR_HOST=firestore:8812
+        links:
+            - firestore
     firestore:
         build:
             dockerfile: Dockerfile.firestore_emulator

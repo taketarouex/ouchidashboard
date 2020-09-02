@@ -15,9 +15,23 @@ and store them in `Firestore`
 
 ### Integration Test
 
+with a firestore emulator
+
 `docker-compose run --service-ports -d firestore`
 
 `FIRESTORE_EMULATOR_HOST=localhost:8812 GCP_PROJECT="test" FIRESTORE_DOC_PATH="test" make integration_test`
+
+### E2E Test
+
+Test from a client to an api server on a container with a firestore emulator.
+
+You need a real nature remo device.
+And set the access token and the device id to environments.
+
+`export NATURE_REMO_ACCESS_TOKEN=${NATURE_REMO_ACCESS_TOKEN}`
+`export NATURE_REMO_DEVICE_ID=${NATURE_REMO_DEVICE_ID}`
+`docker-compose run --service-ports -d firestore`
+`make e2e_test`
 
 ## CI
 
@@ -31,6 +45,6 @@ and store them in `Firestore`
 
 ## Todo
 
-- [ ] e2e test
+- [x] e2e test
 - [x] bad request
 - [ ] code ci from github
