@@ -47,4 +47,5 @@ And set the access token and the device id to environments.
 
 - [x] e2e test
 - [x] bad request
+- [ ] fetcher test
 - [ ] code ci from github
