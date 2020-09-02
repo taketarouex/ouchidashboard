@@ -26,4 +26,5 @@ jobs:
       - name: E2E Test
         env:
           NATURE_REMO_DEVICE_ID: ${{ secrets.NATURE_REMO_DEVICE_ID }}
+        run: make e2e_test
 
