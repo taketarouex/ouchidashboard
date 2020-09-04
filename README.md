@@ -47,5 +47,24 @@ And set the access token and the device id to environments.
 
 - [x] e2e test
 - [x] bad request
+- [x] code ci from github
 - [ ] fetcher test
-- [ ] code ci from github
+- [ ] firestore path
+
+## setup
+
+cloud run invoker
+
+``` shell
+gcloud run services add-iam-policy-binding ouchi-dashboard-collector \
+  --member=serviceAccount:${SERVICE_ACCOUNT} \
+  --role=roles/run.invoker \
+  --platform=managed \
+  --region=asia-northeast1
+```
+
+cloud scheduler
+
+``` shell
+gcloud scheduler jobs update http ouchi-dashboard-collector  --schedule="*/30 * * * *" --uri="${CLOUD_RUN_URI}" --message-body='{"deviceIDs":["'${NATURE_REMO_DEVICE_ID}'"]}' --oidc-service-account-email=${SERVICE_ACCOUNT}
+```
