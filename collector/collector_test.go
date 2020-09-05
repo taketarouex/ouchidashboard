@@ -7,7 +7,7 @@ import (
 	"github.com/golang/mock/gomock"
 )
 
-func TestCollector(t *testing.T) {
+func TestCollector_Collect(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
