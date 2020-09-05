@@ -13,7 +13,8 @@ import (
 
 func TestRepository(t *testing.T) {
 	projectID := os.Getenv("GCP_PROJECT")
-	documentPath := os.Getenv("FIRESTORE_DOC_PATH")
+	sourceID := os.Getenv("NATURE_REMO_DEVICE_ID")
+	rootPath := os.Getenv("FIRESTORE_ROOT_PATH")
 
 	ctx := context.Background()
 	client, err := firestore.NewClient(ctx, projectID)
@@ -22,7 +23,10 @@ func TestRepository(t *testing.T) {
 	}
 	defer client.Close()
 
-	repository := NewRepository(client, documentPath)
+	repository, err := NewRepository(client, rootPath, sourceID)
+	if err != nil {
+		t.Errorf("cant create repository because of: %v", err)
+	}
 	collectLogs := []collectLog{
 		{0, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), temperature, "test"},
 		{1, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), humidity, "test"},

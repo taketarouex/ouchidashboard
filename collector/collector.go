@@ -84,10 +84,18 @@ type (
 	}
 )
 
-func NewRepository(client *firestore.Client, document string) IRepository {
-	return &Repository{
-		document: client.Doc(document),
+func NewRepository(client *firestore.Client, rootPath, sourceID string) (IRepository, error) {
+	ctx := context.Background()
+	documents, err := client.Collection(rootPath).Where("sourceID", "==", sourceID).Documents(ctx).GetAll()
+	if err != nil {
+		return nil, err
 	}
+	if len(documents) != 1 {
+		return nil, errors.Errorf("failed to identify a collection by sourceID: %s", sourceID)
+	}
+	return &Repository{
+		document: client.Doc(fmt.Sprintf("%s/%s", rootPath, documents[0].Ref.ID)),
+	}, nil
 }
 
 func (r *Repository) add(collectLogs []collectLog) error {
