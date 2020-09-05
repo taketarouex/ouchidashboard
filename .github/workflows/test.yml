@@ -23,7 +23,7 @@ jobs:
       - name: Integration Test
         env:
           FIRESTORE_EMULATOR_HOST: localhost:8812
-          FIRESTORE_DOC_PATH: test/test
+          FIRESTORE_ROOT_PATH: test
           GCP_PROJECT: test
         run: make integration_test
       - name: E2E Test

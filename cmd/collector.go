@@ -21,7 +21,7 @@ type message struct {
 func handler(w http.ResponseWriter, r *http.Request) {
 	accessToken := os.Getenv("NATURE_REMO_ACCESS_TOKEN")
 	projectID := os.Getenv("GCP_PROJECT")
-	documentPath := os.Getenv("FIRESTORE_DOC_PATH")
+	rootPath := os.Getenv("FIRESTORE_ROOT_PATH")
 
 	var m message
 	b, err := ioutil.ReadAll(r.Body)
@@ -39,7 +39,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	errorChannel := make(chan error, len(m.DeviceIDs))
 	for _, deviceID := range m.DeviceIDs {
-		go collect(accessToken, deviceID, projectID, documentPath, errorChannel)
+		go collect(accessToken, deviceID, projectID, rootPath, errorChannel)
 	}
 	for range m.DeviceIDs {
 		err := <-errorChannel
@@ -56,7 +56,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func collect(accessToken, deviceID, projectID, documentPath string, c chan error) {
+func collect(accessToken, deviceID, projectID, rootPath string, c chan error) {
 	natureremoClient := natureremo.NewClient(accessToken)
 	fetcher := collector.NewFetcher(natureremoClient, deviceID)
 
@@ -67,7 +67,11 @@ func collect(accessToken, deviceID, projectID, documentPath string, c chan error
 		return
 	}
 	defer firestoreClient.Close()
-	repository := collector.NewRepository(firestoreClient, documentPath)
+	repository, err := collector.NewRepository(firestoreClient, rootPath, deviceID)
+	if err != nil {
+		c <- err
+		return
+	}
 
 	service := collector.NewCollectorService(fetcher, repository)
 	err = service.Collect()

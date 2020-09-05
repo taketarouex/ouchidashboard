@@ -9,7 +9,7 @@ services:
             - PORT=8080
             - GCP_PROJECT
             - NATURE_REMO_ACCESS_TOKEN
-            - FIRESTORE_DOC_PATH
+            - FIRESTORE_ROOT_PATH
             - FIRESTORE_EMULATOR_HOST=firestore:8812
         links:
             - firestore
