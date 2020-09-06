@@ -3,9 +3,9 @@ name: Test
 on: 
   push:
     branches: '**'
-    path-ignore: 
-    - README.md
-    - cloudbuild.yaml
+    paths-ignore: 
+    - 'README.md'
+    - 'cloudbuild.yaml'
 
 jobs:
   test:
