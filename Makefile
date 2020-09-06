@@ -9,8 +9,8 @@ tidy:
 test:
 	go test ./collector
 
-build/collector:
-	go build -o build/. cmd/collector.go
+build/run_server:
+	go build -o build/. cmd/run_server.go
 
 integration_test:
 	go test --tags=integration ./collector

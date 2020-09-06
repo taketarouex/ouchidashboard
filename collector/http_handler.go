@@ -1,9 +1,8 @@
-package main
+package collector
 
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -11,14 +10,13 @@ import (
 
 	"cloud.google.com/go/firestore"
 	"github.com/tenntenn/natureremo"
-	"github.com/tktkc72/ouchi-dashboard/collector"
 )
 
 type message struct {
 	DeviceIDs []string `json:"deviceIDs"`
 }
 
-func collectorHandler(w http.ResponseWriter, r *http.Request) {
+func CollectorHandler(w http.ResponseWriter, r *http.Request) {
 	accessToken := os.Getenv("NATURE_REMO_ACCESS_TOKEN")
 	projectID := os.Getenv("GCP_PROJECT")
 	rootPath := os.Getenv("FIRESTORE_ROOT_PATH")
@@ -45,7 +43,7 @@ func collectorHandler(w http.ResponseWriter, r *http.Request) {
 		err := <-errorChannel
 		if err != nil {
 			log.Printf("collect: %v", err)
-			if collector.IsNoDevice(err) {
+			if IsNoDevice(err) {
 				http.Error(w,
 					"Bad Request",
 					http.StatusBadRequest)
@@ -58,7 +56,7 @@ func collectorHandler(w http.ResponseWriter, r *http.Request) {
 
 func collect(accessToken, deviceID, projectID, rootPath string, c chan error) {
 	natureremoClient := natureremo.NewClient(accessToken)
-	fetcher := collector.NewFetcher(natureremoClient, deviceID)
+	fetcher := NewFetcher(natureremoClient, deviceID)
 
 	ctx := context.Background()
 	firestoreClient, err := firestore.NewClient(ctx, projectID)
@@ -67,27 +65,17 @@ func collect(accessToken, deviceID, projectID, rootPath string, c chan error) {
 		return
 	}
 	defer firestoreClient.Close()
-	repository, err := collector.NewRepository(firestoreClient, rootPath, deviceID)
+	repository, err := NewRepository(firestoreClient, rootPath, deviceID)
 	if err != nil {
 		c <- err
 		return
 	}
 
-	service := collector.NewCollectorService(fetcher, repository)
+	service := NewCollectorService(fetcher, repository)
 	err = service.Collect()
 	if err != nil {
 		c <- err
 		return
 	}
 	c <- nil
-}
-
-func main() {
-	http.HandleFunc("/", collectorHandler)
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
-	log.Printf("collector: listening on port %s", port)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
 }
