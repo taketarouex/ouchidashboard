@@ -12,7 +12,7 @@ import (
 	"github.com/tenntenn/natureremo"
 )
 
-type message struct {
+type Message struct {
 	DeviceIDs []string `json:"deviceIDs"`
 }
 
@@ -21,7 +21,7 @@ func CollectorHandler(w http.ResponseWriter, r *http.Request) {
 	projectID := os.Getenv("GCP_PROJECT")
 	rootPath := os.Getenv("FIRESTORE_ROOT_PATH")
 
-	var m message
+	var m Message
 	b, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
