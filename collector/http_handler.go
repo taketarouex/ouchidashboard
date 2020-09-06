@@ -43,7 +43,7 @@ func CollectorHandler(w http.ResponseWriter, r *http.Request) {
 		err := <-errorChannel
 		if err != nil {
 			log.Printf("collect: %v", err)
-			if IsNoDevice(err) {
+			if IsNoRoom(err) {
 				http.Error(w,
 					"Bad Request",
 					http.StatusBadRequest)
@@ -54,9 +54,9 @@ func CollectorHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func collect(accessToken, deviceID, projectID, rootPath string, c chan error) {
+func collect(accessToken, roomName, projectID, rootPath string, c chan error) {
 	natureremoClient := natureremo.NewClient(accessToken)
-	fetcher := NewFetcher(natureremoClient, deviceID)
+	fetcher := NewFetcher(natureremoClient)
 
 	ctx := context.Background()
 	firestoreClient, err := firestore.NewClient(ctx, projectID)
@@ -65,7 +65,7 @@ func collect(accessToken, deviceID, projectID, rootPath string, c chan error) {
 		return
 	}
 	defer firestoreClient.Close()
-	repository, err := NewRepository(firestoreClient, rootPath, deviceID)
+	repository, err := NewRepository(firestoreClient, rootPath, roomName)
 	if err != nil {
 		c <- err
 		return
