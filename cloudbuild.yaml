@@ -30,7 +30,7 @@ steps:
       - '--update-env-vars=NATURE_REMO_ACCESS_TOKEN=$_NATURE_REMO_ACCESS_TOKEN,GCP_PROJECT=$PROJECT_ID,FIRESTORE_ROOT_PATH=$_FIRESTORE_ROOT_PATH'
     id: Deploy
     entrypoint: gcloud
-    - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
     args:
       - run
       - services
