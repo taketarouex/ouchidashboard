@@ -62,7 +62,12 @@ func NewCollectorService(fetcher IFetcher, repository IRepository) ICollector {
 }
 
 func (s *CollectorSevice) Collect() error {
-	collected, err := s.fetcher.fetch()
+	sourceID, err := s.repository.sourceID()
+	if err != nil {
+		return err
+	}
+
+	collected, err := s.fetcher.fetch(sourceID)
 	if err != nil {
 		return err
 	}
@@ -77,31 +82,52 @@ func (s *CollectorSevice) Collect() error {
 
 type (
 	IRepository interface {
+		sourceID() (string, error)
 		add([]collectLog) error
 	}
 	Repository struct {
-		document *firestore.DocumentRef
+		documentRef  *firestore.DocumentRef
+		documentSnap *firestore.DocumentSnapshot
 	}
 )
 
-func NewRepository(client *firestore.Client, rootPath, sourceID string) (IRepository, error) {
+type noRoom interface {
+	noRoom() bool
+}
+
+func IsNoRoom(err error) bool {
+	no, ok := errors.Cause(err).(noRoom)
+	return ok && no.noRoom()
+}
+
+type noRoomErr struct {
+	s string
+}
+
+func (e *noRoomErr) Error() string { return e.s }
+
+func (e *noRoomErr) noRoom() bool { return true }
+
+func NewRepository(client *firestore.Client, rootPath, roomName string) (IRepository, error) {
 	ctx := context.Background()
-	documents, err := client.Collection(rootPath).Where("sourceID", "==", sourceID).Documents(ctx).GetAll()
+	ref := client.Collection(rootPath).Doc(roomName)
+	snap, err := ref.Get(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(documents) != 1 {
-		return nil, errors.Errorf("failed to identify a collection by sourceID: %s", sourceID)
+	if !snap.Exists() {
+		return nil, &noRoomErr{fmt.Sprintf("no room name: %s", roomName)}
 	}
 	return &Repository{
-		document: client.Doc(fmt.Sprintf("%s/%s", rootPath, documents[0].Ref.ID)),
+		documentRef:  ref,
+		documentSnap: snap,
 	}, nil
 }
 
 func (r *Repository) add(collectLogs []collectLog) error {
 	ctx := context.Background()
 	for _, c := range collectLogs {
-		_, _, err := r.document.Collection(c.LogType.String()).Add(ctx, c)
+		_, _, err := r.documentRef.Collection(c.LogType.String()).Add(ctx, c)
 		if err != nil {
 			return err
 		}
@@ -110,13 +136,20 @@ func (r *Repository) add(collectLogs []collectLog) error {
 	return nil
 }
 
+func (r *Repository) sourceID() (string, error) {
+	sourceID, err := r.documentSnap.DataAt("sourceID")
+	if err != nil {
+		return "", err
+	}
+	return sourceID.(string), nil
+}
+
 type (
 	IFetcher interface {
-		fetch() ([]collectLog, error)
+		fetch(deviceID string) ([]collectLog, error)
 	}
 	Fetcher struct {
-		client   *natureremo.Client
-		deviceID string
+		client *natureremo.Client
 	}
 	deviceSlice []*natureremo.Device
 )
@@ -139,10 +172,9 @@ func (rcv deviceSlice) fetchLog() []collectLog {
 }
 
 // NewFetcher creates Fetcher
-func NewFetcher(client *natureremo.Client, deviceID string) IFetcher {
+func NewFetcher(client *natureremo.Client) IFetcher {
 	return &Fetcher{
-		client:   client,
-		deviceID: deviceID,
+		client: client,
 	}
 }
 
@@ -192,7 +224,7 @@ func (e *noDeviceErr) Error() string { return e.s }
 
 func (e *noDeviceErr) noDevice() bool { return true }
 
-func (f *Fetcher) fetch() ([]collectLog, error) {
+func (f *Fetcher) fetch(deviceID string) ([]collectLog, error) {
 	ctx := context.Background()
 	var devices deviceSlice
 	devices, err := f.client.DeviceService.GetAll(ctx)
@@ -201,10 +233,10 @@ func (f *Fetcher) fetch() ([]collectLog, error) {
 	}
 
 	targetDevice := devices.where(func(d *natureremo.Device) bool {
-		return d.ID == f.deviceID
+		return d.ID == deviceID
 	})
 	if targetDevice == nil {
-		return nil, &noDeviceErr{fmt.Sprintf("no device id: %s", f.deviceID)}
+		return nil, &noDeviceErr{fmt.Sprintf("no device id: %s", deviceID)}
 	}
 	collectLogs := targetDevice.fetchLog()
 

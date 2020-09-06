@@ -9,11 +9,8 @@ import (
 	"testing"
 
 	"cloud.google.com/go/firestore"
+	"github.com/tktkc72/ouchi-dashboard/collector"
 )
-
-type Request struct {
-	DeviceIDs []string `json:"deviceIDs"`
-}
 
 func TestCollector_E2E(t *testing.T) {
 	projectID := os.Getenv("GCP_PROJECT")
@@ -33,8 +30,8 @@ func TestCollector_E2E(t *testing.T) {
 	}
 
 	t.Run("success", func(t *testing.T) {
-		request := Request{
-			DeviceIDs: []string{deviceID},
+		request := collector.Message{
+			RoomNames: []string{doc.ID},
 		}
 		requestJson, err := json.Marshal(request)
 		if err != nil {
@@ -50,10 +47,9 @@ func TestCollector_E2E(t *testing.T) {
 			t.Errorf("status: %s", resp.Status)
 		}
 	})
-	t.Run("fail invalid deviceID", func(t *testing.T) {
-		deviceID := os.Getenv("NATURE_REMO_DEVICE_ID")
-		request := Request{
-			DeviceIDs: []string{deviceID, "test"},
+	t.Run("fail invalid roomName", func(t *testing.T) {
+		request := collector.Message{
+			RoomNames: []string{doc.ID, "test"},
 		}
 		requestJson, err := json.Marshal(request)
 		if err != nil {

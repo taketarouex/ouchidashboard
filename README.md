@@ -30,7 +30,7 @@ And set the access token and the device id to environments.
 
 `export NATURE_REMO_ACCESS_TOKEN=${NATURE_REMO_ACCESS_TOKEN}`
 `export NATURE_REMO_DEVICE_ID=${NATURE_REMO_DEVICE_ID}`
-`docker-compose run --service-ports -d firestore`
+`docker-compose up -d`
 `make e2e_test`
 
 ## CI
@@ -49,7 +49,8 @@ And set the access token and the device id to environments.
 - [x] bad request
 - [x] code ci from github
 - [ ] fetcher test
-- [ ] firestore path
+- [x] firestore path
+- [x] room name request
 
 ## setup
 
@@ -66,5 +67,5 @@ gcloud run services add-iam-policy-binding ouchi-dashboard-collector \
 cloud scheduler
 
 ``` shell
-gcloud scheduler jobs update http ouchi-dashboard-collector  --schedule="${SCHEDULE}" --uri="${CLOUD_RUN_URI}" --message-body='{"deviceIDs":["'${NATURE_REMO_DEVICE_ID}'"]}' --oidc-service-account-email=${SERVICE_ACCOUNT}
+gcloud scheduler jobs update http ouchi-dashboard-collector  --schedule="${SCHEDULE}" --uri="${CLOUD_RUN_URI}" --message-body='{"roomNames":["living", "study"]}' --oidc-service-account-email=${SERVICE_ACCOUNT}
 ```

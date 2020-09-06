@@ -1,4 +1,4 @@
-.PHONY: generate tidy test build e2e_test
+.PHONY: generate tidy test e2e_test
 
 generate:
 	go generate ./collector
@@ -9,8 +9,8 @@ tidy:
 test:
 	go test ./collector
 
-build:
-	go build -o build/. cmd/collector.go
+build/run_server:
+	go build -o build/. cmd/run_server.go
 
 integration_test:
 	go test --tags=integration ./collector

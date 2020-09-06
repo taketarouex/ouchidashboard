@@ -29,10 +29,19 @@ func TestRepository_add(t *testing.T) {
 		t.Fatalf("failed to create test data")
 	}
 
-	repository, err := NewRepository(client, rootPath, sourceID)
+	repository, err := NewRepository(client, rootPath, doc.ID)
 	if err != nil {
 		t.Fatalf("failed to create repository because of: %v", err)
 	}
+
+	gotSourceID, err := repository.sourceID()
+	if err != nil {
+		t.Error("failed to get sourceID")
+	}
+	if sourceID != gotSourceID {
+		t.Errorf("expect: %s, got: %s", sourceID, gotSourceID)
+	}
+
 	collectLogs := []collectLog{
 		{0, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), temperature, "test"},
 		{1, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), humidity, "test"},
