@@ -54,16 +54,6 @@ And set the access token and the device id to environments.
 
 ## setup
 
-cloud run invoker
-
-``` shell
-gcloud run services add-iam-policy-binding ouchi-dashboard-collector \
-  --member=serviceAccount:${SERVICE_ACCOUNT} \
-  --role=roles/run.invoker \
-  --platform=managed \
-  --region=${REGION}
-```
-
 cloud scheduler
 
 ``` shell
