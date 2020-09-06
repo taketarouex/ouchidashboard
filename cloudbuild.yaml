@@ -26,6 +26,7 @@ steps:
         --labels=managed-by=gcp-cloud-build-deploy-cloud-run,commit-sha=$COMMIT_SHA,gcb-build-id=$BUILD_ID
       - '--region=$_DEPLOY_REGION'
       - '--quiet'
+      - '--update-env-vars=NATURE_REMO_ACCESS_TOKEN=$_NATURE_REMO_ACCESS_TOKEN,GCP_PROJECT=$PROJECT_ID,FIRESTORE_ROOT_PATH=$_FIRESTORE_ROOT_PATH'
     id: Deploy
     entrypoint: gcloud
 images:
