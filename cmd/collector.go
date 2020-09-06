@@ -18,7 +18,7 @@ type message struct {
 	DeviceIDs []string `json:"deviceIDs"`
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
+func collectorHandler(w http.ResponseWriter, r *http.Request) {
 	accessToken := os.Getenv("NATURE_REMO_ACCESS_TOKEN")
 	projectID := os.Getenv("GCP_PROJECT")
 	rootPath := os.Getenv("FIRESTORE_ROOT_PATH")
@@ -83,7 +83,7 @@ func collect(accessToken, deviceID, projectID, rootPath string, c chan error) {
 }
 
 func main() {
-	http.HandleFunc("/", handler)
+	http.HandleFunc("/", collectorHandler)
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
