@@ -4,7 +4,7 @@ steps:
       - build
       - '--no-cache'
       - '-t'
-      - '$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
+      - '$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$TAG_NAME'
       - .
       - '-f'
       - Dockerfile
@@ -12,7 +12,7 @@ steps:
   - name: gcr.io/cloud-builders/docker
     args:
       - push
-      - '$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
+      - '$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$TAG_NAME'
     id: Push
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk
     args:
@@ -21,13 +21,26 @@ steps:
       - update
       - $_SERVICE_NAME
       - '--platform=managed'
-      - '--image=$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
+      - '--image=$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$TAG_NAME'
       - >-
         --labels=managed-by=gcp-cloud-build-deploy-cloud-run,commit-sha=$COMMIT_SHA,gcb-build-id=$BUILD_ID
+      - '--service-account=$_SERVICE_ACCOUNT'
       - '--region=$_DEPLOY_REGION'
       - '--quiet'
       - '--update-env-vars=NATURE_REMO_ACCESS_TOKEN=$_NATURE_REMO_ACCESS_TOKEN,GCP_PROJECT=$PROJECT_ID,FIRESTORE_ROOT_PATH=$_FIRESTORE_ROOT_PATH'
     id: Deploy
+    entrypoint: gcloud
+    - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    args:
+      - run
+      - services
+      - add-iam-policy-binding
+      - $_SERVICE_NAME
+      - '--member=serviceAccount:$_INVOKER_SERVICE_ACCOUNT'
+      - '--role=roles/run.invoker'
+      - '--platform=managed'
+      - '--region=$_DEPLOY_REGION'
+    id: Authority
     entrypoint: gcloud
 images:
   - '$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
