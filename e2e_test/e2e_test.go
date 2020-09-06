@@ -47,7 +47,7 @@ func TestCollector_E2E(t *testing.T) {
 			t.Errorf("status: %s", resp.Status)
 		}
 	})
-	t.Run("fail invalid deviceID", func(t *testing.T) {
+	t.Run("fail invalid roomName", func(t *testing.T) {
 		request := collector.Message{
 			RoomNames: []string{doc.ID, "test"},
 		}
