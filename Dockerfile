@@ -15,4 +15,4 @@ COPY --from=builder /app/build/run_server /run_server
 
 EXPOSE $PORT
 
-CMD ["/collector"]
+CMD ["/run_server"]
