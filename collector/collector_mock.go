@@ -69,6 +69,21 @@ func (m *MockIRepository) EXPECT() *MockIRepositoryMockRecorder {
 	return m.recorder
 }
 
+// sourceID mocks base method
+func (m *MockIRepository) sourceID() (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "sourceID")
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// sourceID indicates an expected call of sourceID
+func (mr *MockIRepositoryMockRecorder) sourceID() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "sourceID", reflect.TypeOf((*MockIRepository)(nil).sourceID))
+}
+
 // add mocks base method
 func (m *MockIRepository) add(arg0 []collectLog) error {
 	m.ctrl.T.Helper()
@@ -81,6 +96,43 @@ func (m *MockIRepository) add(arg0 []collectLog) error {
 func (mr *MockIRepositoryMockRecorder) add(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "add", reflect.TypeOf((*MockIRepository)(nil).add), arg0)
+}
+
+// MocknoRoom is a mock of noRoom interface
+type MocknoRoom struct {
+	ctrl     *gomock.Controller
+	recorder *MocknoRoomMockRecorder
+}
+
+// MocknoRoomMockRecorder is the mock recorder for MocknoRoom
+type MocknoRoomMockRecorder struct {
+	mock *MocknoRoom
+}
+
+// NewMocknoRoom creates a new mock instance
+func NewMocknoRoom(ctrl *gomock.Controller) *MocknoRoom {
+	mock := &MocknoRoom{ctrl: ctrl}
+	mock.recorder = &MocknoRoomMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MocknoRoom) EXPECT() *MocknoRoomMockRecorder {
+	return m.recorder
+}
+
+// noRoom mocks base method
+func (m *MocknoRoom) noRoom() bool {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "noRoom")
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// noRoom indicates an expected call of noRoom
+func (mr *MocknoRoomMockRecorder) noRoom() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "noRoom", reflect.TypeOf((*MocknoRoom)(nil).noRoom))
 }
 
 // MockIFetcher is a mock of IFetcher interface
@@ -107,16 +159,53 @@ func (m *MockIFetcher) EXPECT() *MockIFetcherMockRecorder {
 }
 
 // fetch mocks base method
-func (m *MockIFetcher) fetch() ([]collectLog, error) {
+func (m *MockIFetcher) fetch(deviceID string) ([]collectLog, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "fetch")
+	ret := m.ctrl.Call(m, "fetch", deviceID)
 	ret0, _ := ret[0].([]collectLog)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // fetch indicates an expected call of fetch
-func (mr *MockIFetcherMockRecorder) fetch() *gomock.Call {
+func (mr *MockIFetcherMockRecorder) fetch(deviceID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "fetch", reflect.TypeOf((*MockIFetcher)(nil).fetch))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "fetch", reflect.TypeOf((*MockIFetcher)(nil).fetch), deviceID)
+}
+
+// MocknoDevice is a mock of noDevice interface
+type MocknoDevice struct {
+	ctrl     *gomock.Controller
+	recorder *MocknoDeviceMockRecorder
+}
+
+// MocknoDeviceMockRecorder is the mock recorder for MocknoDevice
+type MocknoDeviceMockRecorder struct {
+	mock *MocknoDevice
+}
+
+// NewMocknoDevice creates a new mock instance
+func NewMocknoDevice(ctrl *gomock.Controller) *MocknoDevice {
+	mock := &MocknoDevice{ctrl: ctrl}
+	mock.recorder = &MocknoDeviceMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MocknoDevice) EXPECT() *MocknoDeviceMockRecorder {
+	return m.recorder
+}
+
+// noDevice mocks base method
+func (m *MocknoDevice) noDevice() bool {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "noDevice")
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// noDevice indicates an expected call of noDevice
+func (mr *MocknoDeviceMockRecorder) noDevice() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "noDevice", reflect.TypeOf((*MocknoDevice)(nil).noDevice))
 }

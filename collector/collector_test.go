@@ -18,9 +18,10 @@ func TestCollector_Collect(t *testing.T) {
 		{3, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), motion, "test"},
 	}
 	fetcher := NewMockIFetcher(ctrl)
-	fetcher.EXPECT().fetch().Return(collectLogs, nil)
+	fetcher.EXPECT().fetch("testID").Return(collectLogs, nil)
 
 	repository := NewMockIRepository(ctrl)
+	repository.EXPECT().sourceID().Return("testID", nil)
 	repository.EXPECT().add(collectLogs).Return(nil)
 	service := NewCollectorService(fetcher, repository)
 	service.Collect()
