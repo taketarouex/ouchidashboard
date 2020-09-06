@@ -31,7 +31,7 @@ func TestCollector_E2E(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		request := collector.Message{
-			DeviceIDs: []string{deviceID},
+			RoomNames: []string{doc.ID},
 		}
 		requestJson, err := json.Marshal(request)
 		if err != nil {
@@ -48,9 +48,8 @@ func TestCollector_E2E(t *testing.T) {
 		}
 	})
 	t.Run("fail invalid deviceID", func(t *testing.T) {
-		deviceID := os.Getenv("NATURE_REMO_DEVICE_ID")
 		request := collector.Message{
-			DeviceIDs: []string{deviceID, "test"},
+			RoomNames: []string{doc.ID, "test"},
 		}
 		requestJson, err := json.Marshal(request)
 		if err != nil {

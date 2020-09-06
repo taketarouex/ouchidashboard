@@ -13,7 +13,7 @@ import (
 )
 
 type Message struct {
-	DeviceIDs []string `json:"deviceIDs"`
+	RoomNames []string `json:"RoomNames"`
 }
 
 func CollectorHandler(w http.ResponseWriter, r *http.Request) {
@@ -35,11 +35,11 @@ func CollectorHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	errorChannel := make(chan error, len(m.DeviceIDs))
-	for _, deviceID := range m.DeviceIDs {
-		go collect(accessToken, deviceID, projectID, rootPath, errorChannel)
+	errorChannel := make(chan error, len(m.RoomNames))
+	for _, roomName := range m.RoomNames {
+		go collect(accessToken, roomName, projectID, rootPath, errorChannel)
 	}
-	for range m.DeviceIDs {
+	for range m.RoomNames {
 		err := <-errorChannel
 		if err != nil {
 			log.Printf("collect: %v", err)
