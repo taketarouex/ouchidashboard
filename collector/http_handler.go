@@ -65,7 +65,7 @@ func collect(accessToken, roomName, projectID, rootPath string, c chan error) {
 		return
 	}
 	defer firestoreClient.Close()
-	repository, err := NewRepository(firestoreClient, rootPath, roomName)
+	repository, err := NewRepository(firestoreClient, rootPath, roomName, &nowTime{})
 	if err != nil {
 		c <- err
 		return

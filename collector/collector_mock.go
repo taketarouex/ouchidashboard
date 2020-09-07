@@ -7,6 +7,7 @@ package collector
 import (
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
+	time "time"
 )
 
 // MockICollector is a mock of ICollector interface
@@ -133,6 +134,43 @@ func (m *MocknoRoom) noRoom() bool {
 func (mr *MocknoRoomMockRecorder) noRoom() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "noRoom", reflect.TypeOf((*MocknoRoom)(nil).noRoom))
+}
+
+// MocktimeInterface is a mock of timeInterface interface
+type MocktimeInterface struct {
+	ctrl     *gomock.Controller
+	recorder *MocktimeInterfaceMockRecorder
+}
+
+// MocktimeInterfaceMockRecorder is the mock recorder for MocktimeInterface
+type MocktimeInterfaceMockRecorder struct {
+	mock *MocktimeInterface
+}
+
+// NewMocktimeInterface creates a new mock instance
+func NewMocktimeInterface(ctrl *gomock.Controller) *MocktimeInterface {
+	mock := &MocktimeInterface{ctrl: ctrl}
+	mock.recorder = &MocktimeInterfaceMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MocktimeInterface) EXPECT() *MocktimeInterfaceMockRecorder {
+	return m.recorder
+}
+
+// now mocks base method
+func (m *MocktimeInterface) now() time.Time {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "now")
+	ret0, _ := ret[0].(time.Time)
+	return ret0
+}
+
+// now indicates an expected call of now
+func (mr *MocktimeInterfaceMockRecorder) now() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "now", reflect.TypeOf((*MocktimeInterface)(nil).now))
 }
 
 // MockIFetcher is a mock of IFetcher interface
