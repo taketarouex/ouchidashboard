@@ -168,6 +168,12 @@ type (
 		client *natureremo.Client
 	}
 	deviceSlice []*natureremo.Device
+	noDevice    interface {
+		noDevice() bool
+	}
+	noDeviceErr struct {
+		s string
+	}
 )
 
 func (rcv deviceSlice) where(fn func(*natureremo.Device) bool) (result deviceSlice) {
@@ -223,17 +229,9 @@ func parseNatureremoDevice(d *natureremo.Device) []collectLog {
 	}
 }
 
-type noDevice interface {
-	noDevice() bool
-}
-
 func IsNoDevice(err error) bool {
 	no, ok := errors.Cause(err).(noDevice)
 	return ok && no.noDevice()
-}
-
-type noDeviceErr struct {
-	s string
 }
 
 func (e *noDeviceErr) Error() string { return e.s }
