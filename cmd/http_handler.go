@@ -14,16 +14,12 @@ import (
 	"github.com/tktkc72/ouchi-dashboard/repository"
 )
 
-type Message struct {
-	RoomNames []string `json:"RoomNames"`
-}
-
 func collectorHandler(w http.ResponseWriter, r *http.Request) {
 	accessToken := os.Getenv("NATURE_REMO_ACCESS_TOKEN")
 	projectID := os.Getenv("GCP_PROJECT")
 	rootPath := os.Getenv("FIRESTORE_ROOT_PATH")
 
-	var m Message
+	var m collector.Message
 	b, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {

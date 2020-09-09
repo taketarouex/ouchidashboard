@@ -29,6 +29,9 @@ type (
 		LogType   logType
 		SourceID  string
 	}
+	Message struct {
+		RoomNames []string `json:"RoomNames"`
+	}
 )
 
 func (t logType) String() string {
