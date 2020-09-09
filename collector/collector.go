@@ -21,12 +21,12 @@ type (
 		repository IRepository
 	}
 
-	logType int
+	LogType int
 
 	CollectLog struct {
 		Value     float64
 		UpdatedAt time.Time
-		LogType   logType
+		LogType   LogType
 		SourceID  string
 	}
 	Message struct {
@@ -34,15 +34,15 @@ type (
 	}
 )
 
-func (t logType) String() string {
+func (t LogType) String() string {
 	switch t {
-	case temperature:
+	case Temperature:
 		return "temperature"
-	case humidity:
+	case Humidity:
 		return "humidity"
-	case illumination:
+	case Illumination:
 		return "illumination"
-	case motion:
+	case Motion:
 		return "motion"
 	default:
 		return "Unknown"
@@ -50,10 +50,10 @@ func (t logType) String() string {
 }
 
 const (
-	temperature = iota
-	humidity
-	illumination
-	motion
+	Temperature = iota
+	Humidity
+	Illumination
+	Motion
 )
 
 func NewCollectorService(fetcher IFetcher, repository IRepository) ICollector {
@@ -152,25 +152,25 @@ func parseNatureremoDevice(d *natureremo.Device) []CollectLog {
 		{
 			d.NewestEvents[natureremo.SensorTypeTemperature].Value,
 			d.NewestEvents[natureremo.SensorTypeTemperature].CreatedAt,
-			temperature,
+			Temperature,
 			d.ID,
 		},
 		{
 			d.NewestEvents[natureremo.SensorTypeHumidity].Value,
 			d.NewestEvents[natureremo.SensorTypeHumidity].CreatedAt,
-			humidity,
+			Humidity,
 			d.ID,
 		},
 		{
 			d.NewestEvents[natureremo.SensortypeIllumination].Value,
 			d.NewestEvents[natureremo.SensortypeIllumination].CreatedAt,
-			illumination,
+			Illumination,
 			d.ID,
 		},
 		{
 			d.NewestEvents[natureremo.SensorType("mo")].Value,
 			d.NewestEvents[natureremo.SensorType("mo")].CreatedAt,
-			motion,
+			Motion,
 			d.ID,
 		},
 	}
