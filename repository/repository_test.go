@@ -1,6 +1,6 @@
 // +build integration
 
-package collector
+package repository
 
 import (
 	"context"
@@ -10,9 +10,10 @@ import (
 
 	"cloud.google.com/go/firestore"
 	gomock "github.com/golang/mock/gomock"
+	"github.com/tktkc72/ouchi-dashboard/collector"
 )
 
-func TestRepository_add(t *testing.T) {
+func TestRepository_Add(t *testing.T) {
 	projectID := os.Getenv("GCP_PROJECT")
 	sourceID := os.Getenv("NATURE_REMO_DEVICE_ID")
 	rootPath := os.Getenv("FIRESTORE_ROOT_PATH")
@@ -32,15 +33,15 @@ func TestRepository_add(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockTime := NewMocktimeInterface(ctrl)
+	mockTime := collector.NewMockTimeInterface(ctrl)
 	mockNow := time.Date(2020, 7, 31, 10, 0, 0, 0, time.Local)
-	mockTime.EXPECT().now().AnyTimes().Return(mockNow)
+	mockTime.EXPECT().Now().AnyTimes().Return(mockNow)
 	repository, err := NewRepository(client, rootPath, doc.ID, mockTime)
 	if err != nil {
 		t.Fatalf("failed to create repository because of: %v", err)
 	}
 
-	gotSourceID, err := repository.sourceID()
+	gotSourceID, err := repository.SourceID()
 	if err != nil {
 		t.Error("failed to get sourceID")
 	}
@@ -48,14 +49,14 @@ func TestRepository_add(t *testing.T) {
 		t.Errorf("expect: %s, got: %s", sourceID, gotSourceID)
 	}
 
-	collectLogs := []collectLog{
-		{0, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), temperature, "test"},
-		{1, time.Date(2020, 7, 31, 1, 0, 0, 0, time.Local), humidity, "test"},
-		{2, time.Date(2020, 7, 31, 2, 0, 0, 0, time.Local), illumination, "test"},
-		{3, time.Date(2020, 7, 31, 3, 0, 0, 0, time.Local), motion, "test"},
+	collectLogs := []collector.CollectLog{
+		{0, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), collector.Temperature, "test"},
+		{1, time.Date(2020, 7, 31, 1, 0, 0, 0, time.Local), collector.Humidity, "test"},
+		{2, time.Date(2020, 7, 31, 2, 0, 0, 0, time.Local), collector.Illumination, "test"},
+		{3, time.Date(2020, 7, 31, 3, 0, 0, 0, time.Local), collector.Motion, "test"},
 	}
 
-	if err = repository.add(collectLogs); err != nil {
+	if err = repository.Add(collectLogs); err != nil {
 		t.Fatalf("error: %v", err)
 	}
 
@@ -78,10 +79,10 @@ func TestRepository_add(t *testing.T) {
 	}
 }
 
-func helperParseDocument(t *testing.T, d *firestore.DocumentRef, ctx context.Context) map[logType]ouchiLog {
+func helperParseDocument(t *testing.T, d *firestore.DocumentRef, ctx context.Context) map[collector.LogType]ouchiLog {
 	t.Helper()
-	returnMap := map[logType]ouchiLog{}
-	for _, l := range []logType{temperature, humidity, illumination, motion} {
+	returnMap := map[collector.LogType]ouchiLog{}
+	for _, l := range []collector.LogType{collector.Temperature, collector.Humidity, collector.Illumination, collector.Motion} {
 		docs, err := d.Collection(l.String()).Documents(ctx).GetAll()
 		if err != nil {
 			t.Errorf("failed to get log type: %s", l)
