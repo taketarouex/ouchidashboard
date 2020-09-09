@@ -1,4 +1,4 @@
-package collector
+package main
 
 import (
 	"context"
@@ -10,18 +10,16 @@ import (
 
 	"cloud.google.com/go/firestore"
 	"github.com/tenntenn/natureremo"
+	"github.com/tktkc72/ouchi-dashboard/collector"
+	"github.com/tktkc72/ouchi-dashboard/repository"
 )
 
-type Message struct {
-	RoomNames []string `json:"RoomNames"`
-}
-
-func CollectorHandler(w http.ResponseWriter, r *http.Request) {
+func collectorHandler(w http.ResponseWriter, r *http.Request) {
 	accessToken := os.Getenv("NATURE_REMO_ACCESS_TOKEN")
 	projectID := os.Getenv("GCP_PROJECT")
 	rootPath := os.Getenv("FIRESTORE_ROOT_PATH")
 
-	var m Message
+	var m collector.Message
 	b, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
@@ -43,7 +41,7 @@ func CollectorHandler(w http.ResponseWriter, r *http.Request) {
 		err := <-errorChannel
 		if err != nil {
 			log.Printf("collect: %v", err)
-			if IsNoRoom(err) {
+			if collector.IsNoRoom(err) {
 				http.Error(w,
 					"Bad Request",
 					http.StatusBadRequest)
@@ -56,7 +54,7 @@ func CollectorHandler(w http.ResponseWriter, r *http.Request) {
 
 func collect(accessToken, roomName, projectID, rootPath string, c chan error) {
 	natureremoClient := natureremo.NewClient(accessToken)
-	fetcher := NewFetcher(natureremoClient)
+	fetcher := collector.NewFetcher(natureremoClient)
 
 	ctx := context.Background()
 	firestoreClient, err := firestore.NewClient(ctx, projectID)
@@ -65,13 +63,13 @@ func collect(accessToken, roomName, projectID, rootPath string, c chan error) {
 		return
 	}
 	defer firestoreClient.Close()
-	repository, err := NewRepository(firestoreClient, rootPath, roomName, &nowTime{})
+	repository, err := repository.NewRepository(firestoreClient, rootPath, roomName, &collector.NowTime{})
 	if err != nil {
 		c <- err
 		return
 	}
 
-	service := NewCollectorService(fetcher, repository)
+	service := collector.NewCollectorService(fetcher, repository)
 	err = service.Collect()
 	if err != nil {
 		c <- err

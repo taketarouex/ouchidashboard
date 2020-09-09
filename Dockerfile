@@ -7,7 +7,8 @@ RUN go mod download
 
 COPY . ./
 
-RUN CGO_ENABLED=0 GOOS=linux go build -mod=readonly -v -o build/run_server cmd/run_server.go
+RUN CGO_ENABLED=0 GOOS=linux go build -mod=readonly -v \
+    -o build/run_server cmd/run_server.go cmd/http_handler.go
 
 FROM alpine:3
 
