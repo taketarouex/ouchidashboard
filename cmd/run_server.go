@@ -5,12 +5,10 @@ import (
 	"log"
 	"net/http"
 	"os"
-
-	"github.com/tktkc72/ouchi-dashboard/collector"
 )
 
 func main() {
-	http.HandleFunc("/", collector.CollectorHandler)
+	http.HandleFunc("/", collectorHandler)
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"

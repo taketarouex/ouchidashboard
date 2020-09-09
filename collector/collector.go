@@ -90,7 +90,7 @@ type (
 	NoRoomErr struct {
 		S string
 	}
-	nowTime       struct{}
+	NowTime       struct{}
 	TimeInterface interface {
 		Now() time.Time
 	}
@@ -118,7 +118,7 @@ func (e *NoRoomErr) Error() string { return e.S }
 
 func (e *NoRoomErr) noRoom() bool { return true }
 
-func (*nowTime) Now() time.Time { return time.Now() }
+func (*NowTime) Now() time.Time { return time.Now() }
 
 func (rcv deviceSlice) where(fn func(*natureremo.Device) bool) (result deviceSlice) {
 	for _, v := range rcv {
