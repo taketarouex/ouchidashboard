@@ -70,33 +70,33 @@ func (m *MockIRepository) EXPECT() *MockIRepositoryMockRecorder {
 	return m.recorder
 }
 
-// sourceID mocks base method
-func (m *MockIRepository) sourceID() (string, error) {
+// SourceID mocks base method
+func (m *MockIRepository) SourceID() (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "sourceID")
+	ret := m.ctrl.Call(m, "SourceID")
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// sourceID indicates an expected call of sourceID
-func (mr *MockIRepositoryMockRecorder) sourceID() *gomock.Call {
+// SourceID indicates an expected call of SourceID
+func (mr *MockIRepositoryMockRecorder) SourceID() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "sourceID", reflect.TypeOf((*MockIRepository)(nil).sourceID))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SourceID", reflect.TypeOf((*MockIRepository)(nil).SourceID))
 }
 
-// add mocks base method
-func (m *MockIRepository) add(arg0 []collectLog) error {
+// Add mocks base method
+func (m *MockIRepository) Add(arg0 []CollectLog) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "add", arg0)
+	ret := m.ctrl.Call(m, "Add", arg0)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// add indicates an expected call of add
-func (mr *MockIRepositoryMockRecorder) add(arg0 interface{}) *gomock.Call {
+// Add indicates an expected call of Add
+func (mr *MockIRepositoryMockRecorder) Add(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "add", reflect.TypeOf((*MockIRepository)(nil).add), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Add", reflect.TypeOf((*MockIRepository)(nil).Add), arg0)
 }
 
 // MocknoRoom is a mock of noRoom interface
@@ -136,41 +136,41 @@ func (mr *MocknoRoomMockRecorder) noRoom() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "noRoom", reflect.TypeOf((*MocknoRoom)(nil).noRoom))
 }
 
-// MocktimeInterface is a mock of timeInterface interface
-type MocktimeInterface struct {
+// MockTimeInterface is a mock of TimeInterface interface
+type MockTimeInterface struct {
 	ctrl     *gomock.Controller
-	recorder *MocktimeInterfaceMockRecorder
+	recorder *MockTimeInterfaceMockRecorder
 }
 
-// MocktimeInterfaceMockRecorder is the mock recorder for MocktimeInterface
-type MocktimeInterfaceMockRecorder struct {
-	mock *MocktimeInterface
+// MockTimeInterfaceMockRecorder is the mock recorder for MockTimeInterface
+type MockTimeInterfaceMockRecorder struct {
+	mock *MockTimeInterface
 }
 
-// NewMocktimeInterface creates a new mock instance
-func NewMocktimeInterface(ctrl *gomock.Controller) *MocktimeInterface {
-	mock := &MocktimeInterface{ctrl: ctrl}
-	mock.recorder = &MocktimeInterfaceMockRecorder{mock}
+// NewMockTimeInterface creates a new mock instance
+func NewMockTimeInterface(ctrl *gomock.Controller) *MockTimeInterface {
+	mock := &MockTimeInterface{ctrl: ctrl}
+	mock.recorder = &MockTimeInterfaceMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use
-func (m *MocktimeInterface) EXPECT() *MocktimeInterfaceMockRecorder {
+func (m *MockTimeInterface) EXPECT() *MockTimeInterfaceMockRecorder {
 	return m.recorder
 }
 
-// now mocks base method
-func (m *MocktimeInterface) now() time.Time {
+// Now mocks base method
+func (m *MockTimeInterface) Now() time.Time {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "now")
+	ret := m.ctrl.Call(m, "Now")
 	ret0, _ := ret[0].(time.Time)
 	return ret0
 }
 
-// now indicates an expected call of now
-func (mr *MocktimeInterfaceMockRecorder) now() *gomock.Call {
+// Now indicates an expected call of Now
+func (mr *MockTimeInterfaceMockRecorder) Now() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "now", reflect.TypeOf((*MocktimeInterface)(nil).now))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Now", reflect.TypeOf((*MockTimeInterface)(nil).Now))
 }
 
 // MockIFetcher is a mock of IFetcher interface
@@ -197,10 +197,10 @@ func (m *MockIFetcher) EXPECT() *MockIFetcherMockRecorder {
 }
 
 // fetch mocks base method
-func (m *MockIFetcher) fetch(deviceID string) ([]collectLog, error) {
+func (m *MockIFetcher) fetch(deviceID string) ([]CollectLog, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "fetch", deviceID)
-	ret0, _ := ret[0].([]collectLog)
+	ret0, _ := ret[0].([]CollectLog)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
