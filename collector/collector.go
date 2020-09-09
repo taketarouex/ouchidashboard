@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"time"
 
-	"cloud.google.com/go/firestore"
 	"github.com/pkg/errors"
 	"github.com/tenntenn/natureremo"
 )
@@ -24,7 +23,7 @@ type (
 
 	logType int
 
-	collectLog struct {
+	CollectLog struct {
 		Value     float64
 		UpdatedAt time.Time
 		LogType   logType
@@ -62,7 +61,7 @@ func NewCollectorService(fetcher IFetcher, repository IRepository) ICollector {
 }
 
 func (s *CollectorSevice) Collect() error {
-	sourceID, err := s.repository.sourceID()
+	sourceID, err := s.repository.SourceID()
 	if err != nil {
 		return err
 	}
@@ -72,7 +71,7 @@ func (s *CollectorSevice) Collect() error {
 		return err
 	}
 
-	err = s.repository.add(collected)
+	err = s.repository.Add(collected)
 	if err != nil {
 		return err
 	}
@@ -82,87 +81,11 @@ func (s *CollectorSevice) Collect() error {
 
 type (
 	IRepository interface {
-		sourceID() (string, error)
-		add([]collectLog) error
+		SourceID() (string, error)
+		Add([]CollectLog) error
 	}
-	Repository struct {
-		documentRef  *firestore.DocumentRef
-		documentSnap *firestore.DocumentSnapshot
-		time         timeInterface
-	}
-	ouchiLog struct {
-		Value     float64
-		UpdatedAt time.Time
-		CreatedAt time.Time
-	}
-	noRoom interface {
-		noRoom() bool
-	}
-	noRoomErr struct {
-		s string
-	}
-	nowTime       struct{}
-	timeInterface interface {
-		now() time.Time
-	}
-)
-
-func IsNoRoom(err error) bool {
-	no, ok := errors.Cause(err).(noRoom)
-	return ok && no.noRoom()
-}
-
-func (e *noRoomErr) Error() string { return e.s }
-
-func (e *noRoomErr) noRoom() bool { return true }
-
-func (*nowTime) now() time.Time { return time.Now() }
-
-func NewRepository(client *firestore.Client, rootPath, roomName string, time timeInterface) (IRepository, error) {
-	ctx := context.Background()
-	ref := client.Collection(rootPath).Doc(roomName)
-	snap, err := ref.Get(ctx)
-	if err != nil {
-		return nil, err
-	}
-	if !snap.Exists() {
-		return nil, &noRoomErr{fmt.Sprintf("no room name: %s", roomName)}
-	}
-	return &Repository{
-		documentRef:  ref,
-		documentSnap: snap,
-		time:         time,
-	}, nil
-}
-
-func (r *Repository) add(collectLogs []collectLog) error {
-	ctx := context.Background()
-	for _, c := range collectLogs {
-		o := ouchiLog{
-			c.Value,
-			c.UpdatedAt,
-			r.time.now(),
-		}
-		_, _, err := r.documentRef.Collection(c.LogType.String()).Add(ctx, o)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (r *Repository) sourceID() (string, error) {
-	sourceID, err := r.documentSnap.DataAt("sourceID")
-	if err != nil {
-		return "", err
-	}
-	return sourceID.(string), nil
-}
-
-type (
 	IFetcher interface {
-		fetch(deviceID string) ([]collectLog, error)
+		fetch(deviceID string) ([]CollectLog, error)
 	}
 	Fetcher struct {
 		client *natureremo.Client
@@ -185,8 +108,8 @@ func (rcv deviceSlice) where(fn func(*natureremo.Device) bool) (result deviceSli
 	return result
 }
 
-func (rcv deviceSlice) fetchLog() []collectLog {
-	var collectLogs []collectLog
+func (rcv deviceSlice) fetchLog() []CollectLog {
+	var collectLogs []CollectLog
 	for _, d := range rcv {
 		collectLogs = append(collectLogs, parseNatureremoDevice(d)...)
 	}
@@ -200,8 +123,8 @@ func NewFetcher(client *natureremo.Client) IFetcher {
 	}
 }
 
-func parseNatureremoDevice(d *natureremo.Device) []collectLog {
-	return []collectLog{
+func parseNatureremoDevice(d *natureremo.Device) []CollectLog {
+	return []CollectLog{
 		{
 			d.NewestEvents[natureremo.SensorTypeTemperature].Value,
 			d.NewestEvents[natureremo.SensorTypeTemperature].CreatedAt,
@@ -238,7 +161,7 @@ func (e *noDeviceErr) Error() string { return e.s }
 
 func (e *noDeviceErr) noDevice() bool { return true }
 
-func (f *Fetcher) fetch(deviceID string) ([]collectLog, error) {
+func (f *Fetcher) fetch(deviceID string) ([]CollectLog, error) {
 	ctx := context.Background()
 	var devices deviceSlice
 	devices, err := f.client.DeviceService.GetAll(ctx)
