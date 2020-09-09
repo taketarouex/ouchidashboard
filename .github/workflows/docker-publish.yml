@@ -41,7 +41,7 @@ jobs:
   push:
     name: Push to GitHub Docker Repository
     runs-on: ubuntu-latest
-    needs: test-build
+    needs: test
     if: startsWith(github.ref, 'release')
     steps:
       - name: Checkout
