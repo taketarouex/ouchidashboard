@@ -84,6 +84,16 @@ type (
 		SourceID() (string, error)
 		Add([]CollectLog) error
 	}
+	noRoom interface {
+		noRoom() bool
+	}
+	NoRoomErr struct {
+		S string
+	}
+	nowTime       struct{}
+	TimeInterface interface {
+		Now() time.Time
+	}
 	IFetcher interface {
 		fetch(deviceID string) ([]CollectLog, error)
 	}
@@ -98,6 +108,17 @@ type (
 		s string
 	}
 )
+
+func IsNoRoom(err error) bool {
+	no, ok := errors.Cause(err).(noRoom)
+	return ok && no.noRoom()
+}
+
+func (e *NoRoomErr) Error() string { return e.S }
+
+func (e *NoRoomErr) noRoom() bool { return true }
+
+func (*nowTime) Now() time.Time { return time.Now() }
 
 func (rcv deviceSlice) where(fn func(*natureremo.Device) bool) (result deviceSlice) {
 	for _, v := range rcv {
