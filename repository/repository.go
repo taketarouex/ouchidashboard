@@ -10,6 +10,7 @@ import (
 )
 
 type (
+	// Repository data store
 	Repository struct {
 		documentRef  *firestore.DocumentRef
 		documentSnap *firestore.DocumentSnapshot
@@ -22,6 +23,7 @@ type (
 	}
 )
 
+// NewRepository creates repository which has the name specified
 func NewRepository(client *firestore.Client, rootPath, roomName string, time collector.TimeInterface) (collector.IRepository, error) {
 	ctx := context.Background()
 	ref := client.Collection(rootPath).Doc(roomName)
@@ -39,6 +41,7 @@ func NewRepository(client *firestore.Client, rootPath, roomName string, time col
 	}, nil
 }
 
+// SourceID gets a sourceID at the root document
 func (r *Repository) SourceID() (string, error) {
 	sourceID, err := r.documentSnap.DataAt("sourceID")
 	if err != nil {
@@ -47,6 +50,7 @@ func (r *Repository) SourceID() (string, error) {
 	return sourceID.(string), nil
 }
 
+// Add adds CollectLogs to repository
 func (r *Repository) Add(collectLogs []collector.CollectLog) error {
 	ctx := context.Background()
 	for _, c := range collectLogs {
