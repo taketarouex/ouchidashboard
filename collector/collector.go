@@ -12,23 +12,27 @@ import (
 )
 
 type (
+	// ICollector is an interface of the collector service
 	ICollector interface {
 		Collect() error
 	}
-	// CollectorSevice service
-	CollectorSevice struct {
+	// Sevice collector service
+	Sevice struct {
 		fetcher    IFetcher
 		repository IRepository
 	}
 
+	// LogType represents types of CollectLog
 	LogType int
 
+	// CollectLog is a model of collected logs
 	CollectLog struct {
 		Value     float64
 		UpdatedAt time.Time
 		LogType   LogType
 		SourceID  string
 	}
+	// Message is a struct of a requests
 	Message struct {
 		RoomNames []string `json:"RoomNames"`
 	}
@@ -50,20 +54,26 @@ func (t LogType) String() string {
 }
 
 const (
+	// Temperature is a log type
 	Temperature = iota
+	// Humidity same as above
 	Humidity
+	// Illumination same as above
 	Illumination
+	// Motion same as above
 	Motion
 )
 
+// NewCollectorService creates a service
 func NewCollectorService(fetcher IFetcher, repository IRepository) ICollector {
-	return &CollectorSevice{
+	return &Sevice{
 		fetcher:    fetcher,
 		repository: repository,
 	}
 }
 
-func (s *CollectorSevice) Collect() error {
+// Collect is a use case
+func (s *Sevice) Collect() error {
 	sourceID, err := s.repository.SourceID()
 	if err != nil {
 		return err
@@ -83,6 +93,7 @@ func (s *CollectorSevice) Collect() error {
 }
 
 type (
+	// IRepository is an interface of repository
 	IRepository interface {
 		SourceID() (string, error)
 		Add([]CollectLog) error
@@ -90,16 +101,21 @@ type (
 	noRoom interface {
 		noRoom() bool
 	}
+	// NoRoomErr is an error represents no doc with a specified room name
 	NoRoomErr struct {
 		S string
 	}
-	NowTime       struct{}
+	// NowTime is a utility to return current time
+	NowTime struct{}
+	// TimeInterface is an interface of NowTime
 	TimeInterface interface {
 		Now() time.Time
 	}
+	// IFetcher is an interface of fetching logs
 	IFetcher interface {
 		fetch(deviceID string) ([]CollectLog, error)
 	}
+	// Fetcher is a struct which fetches logs
 	Fetcher struct {
 		client *natureremo.Client
 	}
@@ -112,6 +128,7 @@ type (
 	}
 )
 
+// IsNoRoom judge no room error
 func IsNoRoom(err error) bool {
 	no, ok := errors.Cause(err).(noRoom)
 	return ok && no.noRoom()
@@ -121,6 +138,7 @@ func (e *NoRoomErr) Error() string { return e.S }
 
 func (e *NoRoomErr) noRoom() bool { return true }
 
+// Now returns current time
 func (*NowTime) Now() time.Time { return time.Now() }
 
 func (rcv deviceSlice) where(fn func(*natureremo.Device) bool) (result deviceSlice) {
@@ -176,6 +194,7 @@ func parseNatureremoDevice(d *natureremo.Device) []CollectLog {
 	}
 }
 
+// IsNoDevice judges no device error
 func IsNoDevice(err error) bool {
 	no, ok := errors.Cause(err).(noDevice)
 	return ok && no.noDevice()

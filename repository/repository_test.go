@@ -50,10 +50,10 @@ func TestRepository_Add(t *testing.T) {
 	}
 
 	collectLogs := []collector.CollectLog{
-		{0, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), collector.Temperature, "test"},
-		{1, time.Date(2020, 7, 31, 1, 0, 0, 0, time.Local), collector.Humidity, "test"},
-		{2, time.Date(2020, 7, 31, 2, 0, 0, 0, time.Local), collector.Illumination, "test"},
-		{3, time.Date(2020, 7, 31, 3, 0, 0, 0, time.Local), collector.Motion, "test"},
+		{Value: 0, UpdatedAt: time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), LogType: collector.Temperature, SourceID: "test"},
+		{Value: 1, UpdatedAt: time.Date(2020, 7, 31, 1, 0, 0, 0, time.Local), LogType: collector.Humidity, SourceID: "test"},
+		{Value: 2, UpdatedAt: time.Date(2020, 7, 31, 2, 0, 0, 0, time.Local), LogType: collector.Illumination, SourceID: "test"},
+		{Value: 3, UpdatedAt: time.Date(2020, 7, 31, 3, 0, 0, 0, time.Local), LogType: collector.Motion, SourceID: "test"},
 	}
 
 	if err = repository.Add(collectLogs); err != nil {
