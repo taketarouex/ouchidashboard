@@ -13,6 +13,6 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
-	log.Printf("collector: listening on port %s", port)
+	log.Printf("ouchi: listening on port %s", port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
 }

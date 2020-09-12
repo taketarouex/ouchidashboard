@@ -1,6 +1,6 @@
-# ouchi-dashboard
+# ouchi
 
-display and store data related to `ouchi` life.
+store and display data related to `ouchi` life
 
 ## Description
 

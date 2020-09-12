@@ -10,7 +10,7 @@ import (
 
 	"cloud.google.com/go/firestore"
 	gomock "github.com/golang/mock/gomock"
-	"github.com/tktkc72/ouchi-dashboard/collector"
+	"github.com/tktkc72/ouchi/collector"
 )
 
 func TestRepository_Add(t *testing.T) {
