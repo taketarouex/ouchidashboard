@@ -10,8 +10,8 @@ import (
 
 	"cloud.google.com/go/firestore"
 	"github.com/tenntenn/natureremo"
-	"github.com/tktkc72/ouchi-dashboard/collector"
-	"github.com/tktkc72/ouchi-dashboard/repository"
+	"github.com/tktkc72/ouchi/collector"
+	"github.com/tktkc72/ouchi/repository"
 )
 
 func collectorHandler(w http.ResponseWriter, r *http.Request) {

@@ -1,4 +1,4 @@
-module github.com/tktkc72/ouchi-dashboard
+module github.com/tktkc72/ouchi
 
 go 1.14
 

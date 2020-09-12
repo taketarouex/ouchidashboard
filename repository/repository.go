@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"cloud.google.com/go/firestore"
-	"github.com/tktkc72/ouchi-dashboard/collector"
+	"github.com/tktkc72/ouchi/collector"
 )
 
 type (
