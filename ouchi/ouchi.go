@@ -14,10 +14,12 @@ type (
 		GetTemperature(roomName string, start, end time.Time, opts ...getOption) ([]Log, error)
 	}
 	// Ouchi service
-	Ouchi struct{}
+	Ouchi struct {
+		repository IRepository
+	}
 	// IRepository is an interface of repository
 	IRepository interface {
-		fetch(roomName string, start, end time.Time, limit int, order enum.Order)
+		fetch(roomName string, start, end time.Time, limit int, order enum.Order) ([]Log, error)
 	}
 	// Log ouchi log
 	Log struct {
@@ -46,19 +48,24 @@ func Order(v enum.Order) getOption {
 }
 
 // NewOuchi creates a Ouchi service
-func NewOuchi() IOuchi {
-	return &Ouchi{}
+func NewOuchi(repository IRepository) IOuchi {
+	return &Ouchi{repository}
 }
 
 // GetTemperature gets temperature log
-func (*Ouchi) GetTemperature(roomName string, start, end time.Time, opts ...getOption) ([]Log, error) {
-	o := &getOpts{
+func (o *Ouchi) GetTemperature(roomName string, start, end time.Time, opts ...getOption) ([]Log, error) {
+	options := &getOpts{
 		limit: 0,
 		order: enum.Asc,
 	}
-	for _, opt := range opts {
-		opt(o)
+	for _, setOpt := range opts {
+		setOpt(options)
 	}
 
-	return []Log{}, nil
+	logs, err := o.repository.fetch(roomName, start, end, options.limit, options.order)
+	if err != nil {
+		return nil, err
+	}
+
+	return logs, nil
 }
