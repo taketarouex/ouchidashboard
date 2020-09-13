@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+	"github.com/tktkc72/ouchi/collector"
 	"github.com/tktkc72/ouchi/enum"
 )
 
@@ -27,11 +28,14 @@ type (
 	}
 	// IRepository is an interface of repository
 	IRepository interface {
+		SourceID() (string, error)
+		Add([]collector.CollectLog) error
 		Fetch(roomName string, logType enum.LogType, start, end time.Time, limit int, order enum.Order) ([]Log, error)
 	}
 	// Log ouchi log
 	Log struct {
 		Value     float64
+		UpdatedAt time.Time
 		CreatedAt time.Time
 	}
 	getOpts struct {

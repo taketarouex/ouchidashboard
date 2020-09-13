@@ -6,6 +6,7 @@ package ouchi
 
 import (
 	gomock "github.com/golang/mock/gomock"
+	collector "github.com/tktkc72/ouchi/collector"
 	enum "github.com/tktkc72/ouchi/enum"
 	reflect "reflect"
 	time "time"
@@ -54,6 +55,43 @@ func (mr *MockIOuchiMockRecorder) GetTemperature(roomName, start, end interface{
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTemperature", reflect.TypeOf((*MockIOuchi)(nil).GetTemperature), varargs...)
 }
 
+// MocknoRoom is a mock of noRoom interface
+type MocknoRoom struct {
+	ctrl     *gomock.Controller
+	recorder *MocknoRoomMockRecorder
+}
+
+// MocknoRoomMockRecorder is the mock recorder for MocknoRoom
+type MocknoRoomMockRecorder struct {
+	mock *MocknoRoom
+}
+
+// NewMocknoRoom creates a new mock instance
+func NewMocknoRoom(ctrl *gomock.Controller) *MocknoRoom {
+	mock := &MocknoRoom{ctrl: ctrl}
+	mock.recorder = &MocknoRoomMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MocknoRoom) EXPECT() *MocknoRoomMockRecorder {
+	return m.recorder
+}
+
+// noRoom mocks base method
+func (m *MocknoRoom) noRoom() bool {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "noRoom")
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// noRoom indicates an expected call of noRoom
+func (mr *MocknoRoomMockRecorder) noRoom() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "noRoom", reflect.TypeOf((*MocknoRoom)(nil).noRoom))
+}
+
 // MockIRepository is a mock of IRepository interface
 type MockIRepository struct {
 	ctrl     *gomock.Controller
@@ -75,6 +113,35 @@ func NewMockIRepository(ctrl *gomock.Controller) *MockIRepository {
 // EXPECT returns an object that allows the caller to indicate expected use
 func (m *MockIRepository) EXPECT() *MockIRepositoryMockRecorder {
 	return m.recorder
+}
+
+// SourceID mocks base method
+func (m *MockIRepository) SourceID() (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SourceID")
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SourceID indicates an expected call of SourceID
+func (mr *MockIRepositoryMockRecorder) SourceID() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SourceID", reflect.TypeOf((*MockIRepository)(nil).SourceID))
+}
+
+// Add mocks base method
+func (m *MockIRepository) Add(arg0 []collector.CollectLog) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Add", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Add indicates an expected call of Add
+func (mr *MockIRepositoryMockRecorder) Add(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Add", reflect.TypeOf((*MockIRepository)(nil).Add), arg0)
 }
 
 // Fetch mocks base method

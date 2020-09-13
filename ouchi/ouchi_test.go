@@ -15,10 +15,10 @@ func TestOuchi_GetTemperature(t *testing.T) {
 	defer ctrl.Finish()
 
 	expectedLogs := []Log{
-		{30, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local)},
-		{31, time.Date(2020, 7, 31, 1, 0, 0, 0, time.Local)},
-		{32, time.Date(2020, 7, 31, 2, 0, 0, 0, time.Local)},
-		{33, time.Date(2020, 7, 31, 3, 0, 0, 0, time.Local)},
+		{30, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local)},
+		{31, time.Date(2020, 7, 31, 1, 0, 0, 0, time.Local), time.Date(2020, 7, 31, 1, 0, 0, 0, time.Local)},
+		{32, time.Date(2020, 7, 31, 2, 0, 0, 0, time.Local), time.Date(2020, 7, 31, 2, 0, 0, 0, time.Local)},
+		{33, time.Date(2020, 7, 31, 3, 0, 0, 0, time.Local), time.Date(2020, 7, 31, 3, 0, 0, 0, time.Local)},
 	}
 	start := time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local)
 	end := time.Date(2020, 7, 31, 10, 0, 0, 0, time.Local)
@@ -47,10 +47,10 @@ func TestOuchi_GetTemperature(t *testing.T) {
 	})
 	t.Run("success set order", func(t *testing.T) {
 		reversedLogs := []Log{
-			{33, time.Date(2020, 7, 31, 3, 0, 0, 0, time.Local)},
-			{32, time.Date(2020, 7, 31, 2, 0, 0, 0, time.Local)},
-			{31, time.Date(2020, 7, 31, 1, 0, 0, 0, time.Local)},
-			{30, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local)},
+			{33, time.Date(2020, 7, 31, 3, 0, 0, 0, time.Local), time.Date(2020, 7, 31, 3, 0, 0, 0, time.Local)},
+			{32, time.Date(2020, 7, 31, 2, 0, 0, 0, time.Local), time.Date(2020, 7, 31, 2, 0, 0, 0, time.Local)},
+			{31, time.Date(2020, 7, 31, 1, 0, 0, 0, time.Local), time.Date(2020, 7, 31, 1, 0, 0, 0, time.Local)},
+			{30, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local)},
 		}
 		repository.EXPECT().Fetch("test", enum.Temperature, start, end, 0, enum.Desc).Return(reversedLogs, nil)
 		logs, err := service.GetTemperature("test", start, end, Order(enum.Desc))
