@@ -99,43 +99,6 @@ func (mr *MockIRepositoryMockRecorder) Add(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Add", reflect.TypeOf((*MockIRepository)(nil).Add), arg0)
 }
 
-// MocknoRoom is a mock of noRoom interface
-type MocknoRoom struct {
-	ctrl     *gomock.Controller
-	recorder *MocknoRoomMockRecorder
-}
-
-// MocknoRoomMockRecorder is the mock recorder for MocknoRoom
-type MocknoRoomMockRecorder struct {
-	mock *MocknoRoom
-}
-
-// NewMocknoRoom creates a new mock instance
-func NewMocknoRoom(ctrl *gomock.Controller) *MocknoRoom {
-	mock := &MocknoRoom{ctrl: ctrl}
-	mock.recorder = &MocknoRoomMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use
-func (m *MocknoRoom) EXPECT() *MocknoRoomMockRecorder {
-	return m.recorder
-}
-
-// noRoom mocks base method
-func (m *MocknoRoom) noRoom() bool {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "noRoom")
-	ret0, _ := ret[0].(bool)
-	return ret0
-}
-
-// noRoom indicates an expected call of noRoom
-func (mr *MocknoRoomMockRecorder) noRoom() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "noRoom", reflect.TypeOf((*MocknoRoom)(nil).noRoom))
-}
-
 // MockTimeInterface is a mock of TimeInterface interface
 type MockTimeInterface struct {
 	ctrl     *gomock.Controller

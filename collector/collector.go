@@ -1,4 +1,4 @@
-//go:generate mockgen -source=$GOFILE -destination=collector_mock.go -package=$GOPACKAGE -self_package=github.com/tktkc72/ouchi-dashboard
+//go:generate mockgen -source=$GOFILE -destination=collector_mock.go -package=$GOPACKAGE -self_package=github.com/tktkc72/ouchi
 
 package collector
 
@@ -9,6 +9,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/tenntenn/natureremo"
+	"github.com/tktkc72/ouchi/enum"
 )
 
 type (
@@ -22,46 +23,17 @@ type (
 		repository IRepository
 	}
 
-	// LogType represents types of CollectLog
-	LogType int
-
 	// CollectLog is a model of collected logs
 	CollectLog struct {
 		Value     float64
 		UpdatedAt time.Time
-		LogType   LogType
+		LogType   enum.LogType
 		SourceID  string
 	}
 	// Message is a struct of a requests
 	Message struct {
 		RoomNames []string `json:"RoomNames"`
 	}
-)
-
-func (t LogType) String() string {
-	switch t {
-	case Temperature:
-		return "temperature"
-	case Humidity:
-		return "humidity"
-	case Illumination:
-		return "illumination"
-	case Motion:
-		return "motion"
-	default:
-		return "Unknown"
-	}
-}
-
-const (
-	// Temperature is a log type
-	Temperature = iota
-	// Humidity same as above
-	Humidity
-	// Illumination same as above
-	Illumination
-	// Motion same as above
-	Motion
 )
 
 // NewCollectorService creates a service
@@ -98,13 +70,6 @@ type (
 		SourceID() (string, error)
 		Add([]CollectLog) error
 	}
-	noRoom interface {
-		noRoom() bool
-	}
-	// NoRoomErr is an error represents no doc with a specified room name
-	NoRoomErr struct {
-		S string
-	}
 	// NowTime is a utility to return current time
 	NowTime struct{}
 	// TimeInterface is an interface of NowTime
@@ -127,16 +92,6 @@ type (
 		s string
 	}
 )
-
-// IsNoRoom judge no room error
-func IsNoRoom(err error) bool {
-	no, ok := errors.Cause(err).(noRoom)
-	return ok && no.noRoom()
-}
-
-func (e *NoRoomErr) Error() string { return e.S }
-
-func (e *NoRoomErr) noRoom() bool { return true }
 
 // Now returns current time
 func (*NowTime) Now() time.Time { return time.Now() }
@@ -170,25 +125,25 @@ func parseNatureremoDevice(d *natureremo.Device) []CollectLog {
 		{
 			d.NewestEvents[natureremo.SensorTypeTemperature].Value,
 			d.NewestEvents[natureremo.SensorTypeTemperature].CreatedAt,
-			Temperature,
+			enum.Temperature,
 			d.ID,
 		},
 		{
 			d.NewestEvents[natureremo.SensorTypeHumidity].Value,
 			d.NewestEvents[natureremo.SensorTypeHumidity].CreatedAt,
-			Humidity,
+			enum.Humidity,
 			d.ID,
 		},
 		{
 			d.NewestEvents[natureremo.SensortypeIllumination].Value,
 			d.NewestEvents[natureremo.SensortypeIllumination].CreatedAt,
-			Illumination,
+			enum.Illumination,
 			d.ID,
 		},
 		{
 			d.NewestEvents[natureremo.SensorType("mo")].Value,
 			d.NewestEvents[natureremo.SensorType("mo")].CreatedAt,
-			Motion,
+			enum.Motion,
 			d.ID,
 		},
 	}

@@ -10,10 +10,13 @@ import (
 
 	"cloud.google.com/go/firestore"
 	gomock "github.com/golang/mock/gomock"
+	"github.com/google/go-cmp/cmp"
 	"github.com/tktkc72/ouchi/collector"
+	"github.com/tktkc72/ouchi/enum"
+	"github.com/tktkc72/ouchi/ouchi"
 )
 
-func TestRepository_Add(t *testing.T) {
+func TestRepository(t *testing.T) {
 	projectID := os.Getenv("GCP_PROJECT")
 	sourceID := os.Getenv("NATURE_REMO_DEVICE_ID")
 	rootPath := os.Getenv("FIRESTORE_ROOT_PATH")
@@ -50,10 +53,10 @@ func TestRepository_Add(t *testing.T) {
 	}
 
 	collectLogs := []collector.CollectLog{
-		{Value: 0, UpdatedAt: time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), LogType: collector.Temperature, SourceID: "test"},
-		{Value: 1, UpdatedAt: time.Date(2020, 7, 31, 1, 0, 0, 0, time.Local), LogType: collector.Humidity, SourceID: "test"},
-		{Value: 2, UpdatedAt: time.Date(2020, 7, 31, 2, 0, 0, 0, time.Local), LogType: collector.Illumination, SourceID: "test"},
-		{Value: 3, UpdatedAt: time.Date(2020, 7, 31, 3, 0, 0, 0, time.Local), LogType: collector.Motion, SourceID: "test"},
+		{Value: 0, UpdatedAt: time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), LogType: enum.Temperature, SourceID: "test"},
+		{Value: 1, UpdatedAt: time.Date(2020, 7, 31, 1, 0, 0, 0, time.Local), LogType: enum.Humidity, SourceID: "test"},
+		{Value: 2, UpdatedAt: time.Date(2020, 7, 31, 2, 0, 0, 0, time.Local), LogType: enum.Illumination, SourceID: "test"},
+		{Value: 3, UpdatedAt: time.Date(2020, 7, 31, 3, 0, 0, 0, time.Local), LogType: enum.Motion, SourceID: "test"},
 	}
 
 	if err = repository.Add(collectLogs); err != nil {
@@ -73,31 +76,45 @@ func TestRepository_Add(t *testing.T) {
 		}
 	}
 
+	fetched, err := repository.Fetch(doc.ID, enum.Temperature,
+		time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), time.Date(2020, 7, 31, 10, 0, 0, 0, time.Local),
+		1, enum.Asc)
+	if err != nil {
+		t.Errorf("failed to fetch due to %v", err)
+	}
+	expected := []ouchi.Log{
+		{Value: 0, UpdatedAt: time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), CreatedAt: mockNow},
+	}
+
+	if !cmp.Equal(expected, fetched) {
+		t.Errorf("expected: %v, got: %v", expected, fetched[0])
+	}
+
 	// delete test data
 	if _, err = doc.Delete(ctx); err != nil {
 		t.Fatalf("failed to delete test data")
 	}
 }
 
-func helperParseDocument(t *testing.T, d *firestore.DocumentRef, ctx context.Context) map[collector.LogType]ouchiLog {
+func helperParseDocument(t *testing.T, d *firestore.DocumentRef, ctx context.Context) map[enum.LogType]ouchi.Log {
 	t.Helper()
-	returnMap := map[collector.LogType]ouchiLog{}
-	for _, l := range []collector.LogType{collector.Temperature, collector.Humidity, collector.Illumination, collector.Motion} {
+	returnMap := map[enum.LogType]ouchi.Log{}
+	for _, l := range []enum.LogType{enum.Temperature, enum.Humidity, enum.Illumination, enum.Motion} {
 		docs, err := d.Collection(l.String()).Documents(ctx).GetAll()
 		if err != nil {
 			t.Errorf("failed to get log type: %s", l)
-			returnMap[l] = ouchiLog{}
+			returnMap[l] = ouchi.Log{}
 			continue
 		}
 		if len(docs) != 1 {
 			t.Errorf("unexpected log length expected 1, got: %d", len(docs))
-			returnMap[l] = ouchiLog{}
+			returnMap[l] = ouchi.Log{}
 			continue
 		}
-		returnMap[l] = ouchiLog{
-			docs[0].Data()["Value"].(float64),
-			docs[0].Data()["UpdatedAt"].(time.Time),
-			docs[0].Data()["CreatedAt"].(time.Time),
+		returnMap[l] = ouchi.Log{
+			Value:     docs[0].Data()["Value"].(float64),
+			UpdatedAt: docs[0].Data()["UpdatedAt"].(time.Time),
+			CreatedAt: docs[0].Data()["CreatedAt"].(time.Time),
 		}
 	}
 	return returnMap

@@ -11,6 +11,7 @@ import (
 	"cloud.google.com/go/firestore"
 	"github.com/tenntenn/natureremo"
 	"github.com/tktkc72/ouchi/collector"
+	"github.com/tktkc72/ouchi/ouchi"
 	"github.com/tktkc72/ouchi/repository"
 )
 
@@ -41,7 +42,7 @@ func collectorHandler(w http.ResponseWriter, r *http.Request) {
 		err := <-errorChannel
 		if err != nil {
 			log.Printf("collect: %v", err)
-			if collector.IsNoRoom(err) {
+			if ouchi.IsNoRoom(err) {
 				http.Error(w,
 					"Bad Request",
 					http.StatusBadRequest)

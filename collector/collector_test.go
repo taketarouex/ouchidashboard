@@ -6,6 +6,7 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/pkg/errors"
+	"github.com/tktkc72/ouchi/enum"
 )
 
 func TestCollector_Collect(t *testing.T) {
@@ -14,10 +15,10 @@ func TestCollector_Collect(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		collectLogs := []CollectLog{
-			{0, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), Temperature, "test"},
-			{1, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), Humidity, "test"},
-			{2, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), Illumination, "test"},
-			{3, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), Motion, "test"},
+			{0, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), enum.Temperature, "test"},
+			{1, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), enum.Humidity, "test"},
+			{2, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), enum.Illumination, "test"},
+			{3, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), enum.Motion, "test"},
 		}
 		fetcher := NewMockIFetcher(ctrl)
 		fetcher.EXPECT().fetch("testID").Return(collectLogs, nil)
@@ -51,10 +52,10 @@ func TestCollector_Collect(t *testing.T) {
 	})
 	t.Run("error add", func(t *testing.T) {
 		collectLogs := []CollectLog{
-			{0, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), Temperature, "test"},
-			{1, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), Humidity, "test"},
-			{2, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), Illumination, "test"},
-			{3, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), Motion, "test"},
+			{0, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), enum.Temperature, "test"},
+			{1, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), enum.Humidity, "test"},
+			{2, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), enum.Illumination, "test"},
+			{3, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), enum.Motion, "test"},
 		}
 		fetcher := NewMockIFetcher(ctrl)
 		fetcher.EXPECT().fetch("testID").Return(collectLogs, nil)

@@ -1,13 +1,13 @@
 .PHONY: generate tidy test e2e_test
 
 generate:
-	go generate ./collector
+	go generate ./collector ./ouchi
 
 tidy:
 	go mod tidy
 
 test:
-	go test ./collector
+	go test ./collector ./ouchi
 
 build/run_server:
 	go build -o build/. cmd/run_server.go
