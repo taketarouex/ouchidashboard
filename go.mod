@@ -6,7 +6,7 @@ require (
 	cloud.google.com/go v0.65.0 // indirect
 	cloud.google.com/go/firestore v1.3.0
 	github.com/golang/mock v1.4.4
-	github.com/google/go-cmp v0.5.2 // indirect
+	github.com/google/go-cmp v0.5.2
 	github.com/pkg/errors v0.9.1
 	github.com/tenntenn/natureremo v0.0.1
 	golang.org/x/net v0.0.0-20200904194848-62affa334b73 // indirect
