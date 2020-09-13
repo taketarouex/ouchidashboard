@@ -9,6 +9,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/tenntenn/natureremo"
+	"github.com/tktkc72/ouchi/enum"
 )
 
 type (
@@ -22,46 +23,17 @@ type (
 		repository IRepository
 	}
 
-	// LogType represents types of CollectLog
-	LogType int
-
 	// CollectLog is a model of collected logs
 	CollectLog struct {
 		Value     float64
 		UpdatedAt time.Time
-		LogType   LogType
+		LogType   enum.LogType
 		SourceID  string
 	}
 	// Message is a struct of a requests
 	Message struct {
 		RoomNames []string `json:"RoomNames"`
 	}
-)
-
-func (t LogType) String() string {
-	switch t {
-	case Temperature:
-		return "temperature"
-	case Humidity:
-		return "humidity"
-	case Illumination:
-		return "illumination"
-	case Motion:
-		return "motion"
-	default:
-		return "Unknown"
-	}
-}
-
-const (
-	// Temperature is a log type
-	Temperature = iota
-	// Humidity same as above
-	Humidity
-	// Illumination same as above
-	Illumination
-	// Motion same as above
-	Motion
 )
 
 // NewCollectorService creates a service
@@ -170,25 +142,25 @@ func parseNatureremoDevice(d *natureremo.Device) []CollectLog {
 		{
 			d.NewestEvents[natureremo.SensorTypeTemperature].Value,
 			d.NewestEvents[natureremo.SensorTypeTemperature].CreatedAt,
-			Temperature,
+			enum.Temperature,
 			d.ID,
 		},
 		{
 			d.NewestEvents[natureremo.SensorTypeHumidity].Value,
 			d.NewestEvents[natureremo.SensorTypeHumidity].CreatedAt,
-			Humidity,
+			enum.Humidity,
 			d.ID,
 		},
 		{
 			d.NewestEvents[natureremo.SensortypeIllumination].Value,
 			d.NewestEvents[natureremo.SensortypeIllumination].CreatedAt,
-			Illumination,
+			enum.Illumination,
 			d.ID,
 		},
 		{
 			d.NewestEvents[natureremo.SensorType("mo")].Value,
 			d.NewestEvents[natureremo.SensorType("mo")].CreatedAt,
-			Motion,
+			enum.Motion,
 			d.ID,
 		},
 	}
