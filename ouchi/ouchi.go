@@ -19,7 +19,7 @@ type (
 	}
 	// IRepository is an interface of repository
 	IRepository interface {
-		fetch(roomName string, start, end time.Time, limit int, order enum.Order) ([]Log, error)
+		Fetch(roomName string, logType enum.LogType, start, end time.Time, limit int, order enum.Order) ([]Log, error)
 	}
 	// Log ouchi log
 	Log struct {
@@ -62,7 +62,7 @@ func (o *Ouchi) GetTemperature(roomName string, start, end time.Time, opts ...ge
 		setOpt(options)
 	}
 
-	logs, err := o.repository.fetch(roomName, start, end, options.limit, options.order)
+	logs, err := o.repository.Fetch(roomName, enum.Temperature, start, end, options.limit, options.order)
 	if err != nil {
 		return nil, err
 	}

@@ -77,17 +77,17 @@ func (m *MockIRepository) EXPECT() *MockIRepositoryMockRecorder {
 	return m.recorder
 }
 
-// fetch mocks base method
-func (m *MockIRepository) fetch(roomName string, start, end time.Time, limit int, order enum.Order) ([]Log, error) {
+// Fetch mocks base method
+func (m *MockIRepository) Fetch(roomName string, logType enum.LogType, start, end time.Time, limit int, order enum.Order) ([]Log, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "fetch", roomName, start, end, limit, order)
+	ret := m.ctrl.Call(m, "Fetch", roomName, logType, start, end, limit, order)
 	ret0, _ := ret[0].([]Log)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// fetch indicates an expected call of fetch
-func (mr *MockIRepositoryMockRecorder) fetch(roomName, start, end, limit, order interface{}) *gomock.Call {
+// Fetch indicates an expected call of Fetch
+func (mr *MockIRepositoryMockRecorder) Fetch(roomName, logType, start, end, limit, order interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "fetch", reflect.TypeOf((*MockIRepository)(nil).fetch), roomName, start, end, limit, order)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Fetch", reflect.TypeOf((*MockIRepository)(nil).Fetch), roomName, logType, start, end, limit, order)
 }
