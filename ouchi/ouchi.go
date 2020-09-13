@@ -5,6 +5,7 @@ package ouchi
 import (
 	"time"
 
+	"github.com/pkg/errors"
 	"github.com/tktkc72/ouchi/enum"
 )
 
@@ -16,6 +17,13 @@ type (
 	// Ouchi service
 	Ouchi struct {
 		repository IRepository
+	}
+	noRoom interface {
+		noRoom() bool
+	}
+	// NoRoomErr is an error represents no doc with a specified room name
+	NoRoomErr struct {
+		S string
 	}
 	// IRepository is an interface of repository
 	IRepository interface {
@@ -46,6 +54,16 @@ func Order(v enum.Order) getOption {
 		g.order = v
 	}
 }
+
+// IsNoRoom judge no room error
+func IsNoRoom(err error) bool {
+	no, ok := errors.Cause(err).(noRoom)
+	return ok && no.noRoom()
+}
+
+func (e *NoRoomErr) Error() string { return e.S }
+
+func (e *NoRoomErr) noRoom() bool { return true }
 
 // NewOuchi creates a Ouchi service
 func NewOuchi(repository IRepository) IOuchi {

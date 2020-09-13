@@ -70,13 +70,6 @@ type (
 		SourceID() (string, error)
 		Add([]CollectLog) error
 	}
-	noRoom interface {
-		noRoom() bool
-	}
-	// NoRoomErr is an error represents no doc with a specified room name
-	NoRoomErr struct {
-		S string
-	}
 	// NowTime is a utility to return current time
 	NowTime struct{}
 	// TimeInterface is an interface of NowTime
@@ -99,16 +92,6 @@ type (
 		s string
 	}
 )
-
-// IsNoRoom judge no room error
-func IsNoRoom(err error) bool {
-	no, ok := errors.Cause(err).(noRoom)
-	return ok && no.noRoom()
-}
-
-func (e *NoRoomErr) Error() string { return e.S }
-
-func (e *NoRoomErr) noRoom() bool { return true }
 
 // Now returns current time
 func (*NowTime) Now() time.Time { return time.Now() }
