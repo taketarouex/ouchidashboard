@@ -8,7 +8,3 @@ var Asc = Order{"ASC"}
 
 // Desc order
 var Desc = Order{"DESC"}
-
-type Teki struct{ value string }
-
-var Aa = Teki{"aa"}
