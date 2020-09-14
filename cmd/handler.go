@@ -2,36 +2,25 @@ package main
 
 import (
 	"context"
-	"encoding/json"
-	"io/ioutil"
 	"log"
-	"net/http"
 	"os"
 
 	"cloud.google.com/go/firestore"
+	"github.com/labstack/echo"
 	"github.com/tenntenn/natureremo"
 	"github.com/tktkc72/ouchi/collector"
 	"github.com/tktkc72/ouchi/ouchi"
 	"github.com/tktkc72/ouchi/repository"
 )
 
-func collectorHandler(w http.ResponseWriter, r *http.Request) {
+func collectorHandler(c echo.Context) error {
 	accessToken := os.Getenv("NATURE_REMO_ACCESS_TOKEN")
 	projectID := os.Getenv("GCP_PROJECT")
 	rootPath := os.Getenv("FIRESTORE_ROOT_PATH")
 
-	var m collector.Message
-	b, err := ioutil.ReadAll(r.Body)
-	defer r.Body.Close()
-	if err != nil {
-		log.Printf("ioutil.ReadAll: %v", err)
-		http.Error(w, "Bad Request", http.StatusBadRequest)
-		return
-	}
-	if err := json.Unmarshal(b, &m); err != nil {
-		log.Printf("json.Unmarshal: %v", err)
-		http.Error(w, "Bad Request", http.StatusBadRequest)
-		return
+	m := new(collector.Message)
+	if err := c.Bind(m); err != nil {
+		return err
 	}
 
 	errorChannel := make(chan error, len(m.RoomNames))
@@ -43,14 +32,13 @@ func collectorHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Printf("collect: %v", err)
 			if ouchi.IsNoRoom(err) {
-				http.Error(w,
-					"Bad Request",
-					http.StatusBadRequest)
+				return echo.ErrBadRequest
 			} else {
-				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+				return echo.ErrInternalServerError
 			}
 		}
 	}
+	return nil
 }
 
 func collect(accessToken, roomName, projectID, rootPath string, c chan error) {

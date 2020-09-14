@@ -2,17 +2,20 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"net/http"
 	"os"
+
+	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 )
 
 func main() {
-	http.HandleFunc("/", collectorHandler)
+	e := echo.New()
+
+	e.Use(middleware.Logger())
+	e.POST("/", collectorHandler)
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
-	log.Printf("ouchi: listening on port %s", port)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
+	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", port)))
 }

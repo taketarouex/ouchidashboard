@@ -10,7 +10,7 @@ test:
 	go test ./collector ./ouchi
 
 build/run_server:
-	go build -o build/. cmd/run_server.go
+	go build -o build/. cmd/run_server.go cmd/handler.go
 
 integration_test:
 	go test --tags=integration ./collector
