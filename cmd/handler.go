@@ -22,7 +22,8 @@ func collectorHandler(c echo.Context) error {
 	if err := c.Bind(m); err != nil {
 		return err
 	}
-
+	header := c.Request().Header
+	log.Printf("header: %v", header)
 	errorChannel := make(chan error, len(m.RoomNames))
 	for _, roomName := range m.RoomNames {
 		go collect(accessToken, roomName, projectID, rootPath, errorChannel)
