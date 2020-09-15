@@ -33,9 +33,8 @@ func collectorHandler(c echo.Context) error {
 			log.Printf("collect: %v", err)
 			if ouchi.IsNoRoom(err) {
 				return echo.ErrBadRequest
-			} else {
-				return echo.ErrInternalServerError
 			}
+			return echo.ErrInternalServerError
 		}
 	}
 	return nil
