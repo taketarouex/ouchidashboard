@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"encoding/json"
+	"io/ioutil"
 	"log"
 	"os"
 
@@ -18,11 +20,17 @@ func collectorHandler(c echo.Context) error {
 	projectID := os.Getenv("GCP_PROJECT")
 	rootPath := os.Getenv("FIRESTORE_ROOT_PATH")
 
-	m := new(collector.Message)
-	if err := c.Bind(m); err != nil {
-		return err
+	var m collector.Message
+	b, err := ioutil.ReadAll(c.Request().Body)
+	defer c.Request().Body.Close()
+	if err != nil {
+		log.Printf("ioutil.ReadAll: %v", err)
+		return echo.ErrBadRequest
 	}
-
+	if err := json.Unmarshal(b, &m); err != nil {
+		log.Printf("json.Unmarshal: %v", err)
+		return echo.ErrBadRequest
+	}
 	errorChannel := make(chan error, len(m.RoomNames))
 	for _, roomName := range m.RoomNames {
 		go collect(accessToken, roomName, projectID, rootPath, errorChannel)
