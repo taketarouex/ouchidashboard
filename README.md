@@ -57,5 +57,5 @@ And set the access token and the device id to environments.
 cloud scheduler
 
 ``` shell
-gcloud scheduler jobs update http ouchi-dashboard-collector  --schedule="${SCHEDULE}" --uri="${CLOUD_RUN_URI}" --message-body='{"roomNames":["living", "study"]}' --oidc-service-account-email=${SERVICE_ACCOUNT}
+gcloud beta scheduler jobs update http ouchi-dashboard-collector  --schedule=${SCHEDULE} --uri="${CLOUD_RUN_URI}" --message-body='{"roomNames":["living", "study"]}' --oidc-service-account-email=${SERVICE_ACCOUNT} --update-headers=Content-Type=application/json
 ```
