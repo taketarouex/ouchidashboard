@@ -6,7 +6,7 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/pkg/errors"
-	"github.com/tktkc72/ouchi/enum"
+	"github.com/tktkc72/ouchidashboard/enum"
 )
 
 func TestCollector_Collect(t *testing.T) {
