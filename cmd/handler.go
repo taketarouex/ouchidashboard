@@ -8,9 +8,9 @@ import (
 	"cloud.google.com/go/firestore"
 	"github.com/labstack/echo"
 	"github.com/tenntenn/natureremo"
-	"github.com/tktkc72/ouchi/collector"
-	"github.com/tktkc72/ouchi/ouchi"
-	"github.com/tktkc72/ouchi/repository"
+	"github.com/tktkc72/ouchidashboard/collector"
+	"github.com/tktkc72/ouchidashboard/ouchi"
+	"github.com/tktkc72/ouchidashboard/repository"
 )
 
 func collectorHandler(c echo.Context) error {

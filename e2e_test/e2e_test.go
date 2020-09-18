@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"cloud.google.com/go/firestore"
-	"github.com/tktkc72/ouchi/collector"
+	"github.com/tktkc72/ouchidashboard/collector"
 )
 
 func TestCollector_E2E(t *testing.T) {

@@ -9,7 +9,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/tenntenn/natureremo"
-	"github.com/tktkc72/ouchi/enum"
+	"github.com/tktkc72/ouchidashboard/enum"
 )
 
 type (

@@ -7,9 +7,9 @@ import (
 
 	"cloud.google.com/go/firestore"
 	"github.com/pkg/errors"
-	"github.com/tktkc72/ouchi/collector"
-	"github.com/tktkc72/ouchi/enum"
-	"github.com/tktkc72/ouchi/ouchi"
+	"github.com/tktkc72/ouchidashboard/collector"
+	"github.com/tktkc72/ouchidashboard/enum"
+	"github.com/tktkc72/ouchidashboard/ouchi"
 )
 
 type (

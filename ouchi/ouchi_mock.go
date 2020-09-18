@@ -6,8 +6,8 @@ package ouchi
 
 import (
 	gomock "github.com/golang/mock/gomock"
-	collector "github.com/tktkc72/ouchi/collector"
-	enum "github.com/tktkc72/ouchi/enum"
+	collector "github.com/tktkc72/ouchidashboard/collector"
+	enum "github.com/tktkc72/ouchidashboard/enum"
 	reflect "reflect"
 	time "time"
 )
