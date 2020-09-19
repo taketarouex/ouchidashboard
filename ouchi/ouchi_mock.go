@@ -35,24 +35,24 @@ func (m *MockIOuchi) EXPECT() *MockIOuchiMockRecorder {
 	return m.recorder
 }
 
-// GetTemperature mocks base method
-func (m *MockIOuchi) GetTemperature(roomName string, start, end time.Time, opts ...getOption) ([]Log, error) {
+// GetLogs mocks base method
+func (m *MockIOuchi) GetLogs(roomName string, logType enum.LogType, start, end time.Time, opts ...getOption) ([]Log, error) {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{roomName, start, end}
+	varargs := []interface{}{roomName, logType, start, end}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
-	ret := m.ctrl.Call(m, "GetTemperature", varargs...)
+	ret := m.ctrl.Call(m, "GetLogs", varargs...)
 	ret0, _ := ret[0].([]Log)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetTemperature indicates an expected call of GetTemperature
-func (mr *MockIOuchiMockRecorder) GetTemperature(roomName, start, end interface{}, opts ...interface{}) *gomock.Call {
+// GetLogs indicates an expected call of GetLogs
+func (mr *MockIOuchiMockRecorder) GetLogs(roomName, logType, start, end interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{roomName, start, end}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTemperature", reflect.TypeOf((*MockIOuchi)(nil).GetTemperature), varargs...)
+	varargs := append([]interface{}{roomName, logType, start, end}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLogs", reflect.TypeOf((*MockIOuchi)(nil).GetLogs), varargs...)
 }
 
 // MocknoRoom is a mock of noRoom interface
