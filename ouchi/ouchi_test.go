@@ -10,7 +10,7 @@ import (
 	"github.com/tktkc72/ouchidashboard/enum"
 )
 
-func TestOuchi_GetTemperature(t *testing.T) {
+func TestOuchi_GetLogs(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -27,7 +27,7 @@ func TestOuchi_GetTemperature(t *testing.T) {
 
 	t.Run("success no option", func(t *testing.T) {
 		repository.EXPECT().Fetch("test", enum.Temperature, start, end, 0, enum.Asc).Return(expectedLogs, nil)
-		logs, err := service.GetTemperature("test", start, end)
+		logs, err := service.GetLogs("test", enum.Temperature, start, end)
 		if err != nil {
 			t.Errorf("failed to get temperature log, due to: %v", err)
 		}
@@ -37,7 +37,7 @@ func TestOuchi_GetTemperature(t *testing.T) {
 	})
 	t.Run("success set limit", func(t *testing.T) {
 		repository.EXPECT().Fetch("test", enum.Temperature, start, end, 3, enum.Asc).Return(expectedLogs[0:2], nil)
-		logs, err := service.GetTemperature("test", start, end, Limit(3))
+		logs, err := service.GetLogs("test", enum.Temperature, start, end, Limit(3))
 		if err != nil {
 			t.Errorf("failed to get temperature log, due to: %v", err)
 		}
@@ -53,7 +53,7 @@ func TestOuchi_GetTemperature(t *testing.T) {
 			{30, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local)},
 		}
 		repository.EXPECT().Fetch("test", enum.Temperature, start, end, 0, enum.Desc).Return(reversedLogs, nil)
-		logs, err := service.GetTemperature("test", start, end, Order(enum.Desc))
+		logs, err := service.GetLogs("test", enum.Temperature, start, end, Order(enum.Desc))
 		if err != nil {
 			t.Errorf("failed to get temperature log, due to: %v", err)
 		}
@@ -63,7 +63,7 @@ func TestOuchi_GetTemperature(t *testing.T) {
 	})
 	t.Run("fail to Fetch", func(t *testing.T) {
 		repository.EXPECT().Fetch("test", enum.Temperature, start, end, 0, enum.Asc).Return(nil, errors.New("failed to fetch"))
-		if _, err := service.GetTemperature("test", start, end); err == nil {
+		if _, err := service.GetLogs("test", enum.Temperature, start, end); err == nil {
 			t.Error("expect error but nil")
 		}
 	})

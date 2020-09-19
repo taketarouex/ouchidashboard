@@ -13,7 +13,7 @@ import (
 type (
 	// IOuchi is an interface of the ouchi service
 	IOuchi interface {
-		GetTemperature(roomName string, start, end time.Time, opts ...getOption) ([]Log, error)
+		GetLogs(roomName string, logType enum.LogType, start, end time.Time, opts ...getOption) ([]Log, error)
 	}
 	// Ouchi service
 	Ouchi struct {
@@ -74,8 +74,8 @@ func NewOuchi(repository IRepository) IOuchi {
 	return &Ouchi{repository}
 }
 
-// GetTemperature gets temperature log
-func (o *Ouchi) GetTemperature(roomName string, start, end time.Time, opts ...getOption) ([]Log, error) {
+// GetLogs gets log
+func (o *Ouchi) GetLogs(roomName string, logType enum.LogType, start, end time.Time, opts ...getOption) ([]Log, error) {
 	options := &getOpts{
 		limit: 0,
 		order: enum.Asc,
@@ -84,7 +84,7 @@ func (o *Ouchi) GetTemperature(roomName string, start, end time.Time, opts ...ge
 		setOpt(options)
 	}
 
-	logs, err := o.repository.Fetch(roomName, enum.Temperature, start, end, options.limit, options.order)
+	logs, err := o.repository.Fetch(roomName, logType, start, end, options.limit, options.order)
 	if err != nil {
 		return nil, err
 	}

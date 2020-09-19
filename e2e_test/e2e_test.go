@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"testing"
@@ -12,7 +14,7 @@ import (
 	"github.com/tktkc72/ouchidashboard/collector"
 )
 
-func TestCollector_E2E(t *testing.T) {
+func TestOuchi_E2E(t *testing.T) {
 	projectID := os.Getenv("GCP_PROJECT")
 	rootPath := os.Getenv("FIRESTORE_ROOT_PATH")
 	deviceID := os.Getenv("NATURE_REMO_DEVICE_ID")
@@ -64,6 +66,16 @@ func TestCollector_E2E(t *testing.T) {
 		if resp.StatusCode != 500 {
 			t.Errorf("status: %s", resp.Status)
 		}
+	})
+
+	t.Run("success", func(t *testing.T) {
+		resp, err := http.Get(fmt.Sprintf("http://localhost:8080/rooms/%s/logs/temperature", doc.ID))
+		if err != nil {
+			t.Errorf("failed to get logs due to: %v", err)
+		}
+		defer resp.Body.Close()
+		body, err := ioutil.ReadAll(resp.Body)
+		t.Logf("body: %v", string(body))
 	})
 
 	// delete test data

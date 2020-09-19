@@ -1,5 +1,7 @@
 package enum
 
+import "github.com/pkg/errors"
+
 // Order desc or asc
 type Order struct{ value string }
 
@@ -29,4 +31,20 @@ func (t LogType) String() string {
 		return "undefined"
 	}
 	return t.value
+}
+
+// ParseLogType parses string to LogType
+func ParseLogType(target string) (LogType, error) {
+	switch target {
+	case Temperature.String():
+		return Temperature, nil
+	case Humidity.String():
+		return Humidity, nil
+	case Illumination.String():
+		return Illumination, nil
+	case Motion.String():
+		return Motion, nil
+	default:
+		return LogType{}, errors.Errorf("invalid type: %s", target)
+	}
 }

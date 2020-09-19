@@ -13,6 +13,7 @@ func main() {
 
 	e.Use(middleware.Logger())
 	e.POST("/", collectorHandler)
+	e.GET("/rooms/:roomName/logs/:logType", getLogsHandler)
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
