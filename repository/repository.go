@@ -69,15 +69,12 @@ func (r *Repository) Add(collectLogs []collector.CollectLog) error {
 }
 
 // Fetch fetches logs from repository
-func (r *Repository) Fetch(roomName string,
+func (r *Repository) Fetch(
 	logType enum.LogType,
 	start, end time.Time,
 	limit int, order enum.Order) ([]ouchi.Log, error) {
-	roomDoc := r.rootCollection.Doc(roomName)
-	if roomDoc == nil {
-		return nil, &ouchi.NoRoomErr{S: fmt.Sprintf("no room name: %s", roomName)}
-	}
-	collection := roomDoc.Collection(logType.String())
+
+	collection := r.documentRef.Collection(logType.String())
 	if collection == nil {
 		return nil, errors.Errorf("no collection type: %s", logType.String())
 	}

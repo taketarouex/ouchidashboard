@@ -26,8 +26,8 @@ func TestOuchi_GetLogs(t *testing.T) {
 	service := NewOuchi(repository)
 
 	t.Run("success no option", func(t *testing.T) {
-		repository.EXPECT().Fetch("test", enum.Temperature, start, end, 0, enum.Asc).Return(expectedLogs, nil)
-		logs, err := service.GetLogs("test", enum.Temperature, start, end)
+		repository.EXPECT().Fetch(enum.Temperature, start, end, 0, enum.Asc).Return(expectedLogs, nil)
+		logs, err := service.GetLogs(enum.Temperature, start, end)
 		if err != nil {
 			t.Errorf("failed to get temperature log, due to: %v", err)
 		}
@@ -36,8 +36,8 @@ func TestOuchi_GetLogs(t *testing.T) {
 		}
 	})
 	t.Run("success set limit", func(t *testing.T) {
-		repository.EXPECT().Fetch("test", enum.Temperature, start, end, 3, enum.Asc).Return(expectedLogs[0:2], nil)
-		logs, err := service.GetLogs("test", enum.Temperature, start, end, Limit(3))
+		repository.EXPECT().Fetch(enum.Temperature, start, end, 3, enum.Asc).Return(expectedLogs[0:2], nil)
+		logs, err := service.GetLogs(enum.Temperature, start, end, Limit(3))
 		if err != nil {
 			t.Errorf("failed to get temperature log, due to: %v", err)
 		}
@@ -52,8 +52,8 @@ func TestOuchi_GetLogs(t *testing.T) {
 			{31, time.Date(2020, 7, 31, 1, 0, 0, 0, time.Local), time.Date(2020, 7, 31, 1, 0, 0, 0, time.Local)},
 			{30, time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local), time.Date(2020, 7, 31, 0, 0, 0, 0, time.Local)},
 		}
-		repository.EXPECT().Fetch("test", enum.Temperature, start, end, 0, enum.Desc).Return(reversedLogs, nil)
-		logs, err := service.GetLogs("test", enum.Temperature, start, end, Order(enum.Desc))
+		repository.EXPECT().Fetch(enum.Temperature, start, end, 0, enum.Desc).Return(reversedLogs, nil)
+		logs, err := service.GetLogs(enum.Temperature, start, end, Order(enum.Desc))
 		if err != nil {
 			t.Errorf("failed to get temperature log, due to: %v", err)
 		}
@@ -62,8 +62,8 @@ func TestOuchi_GetLogs(t *testing.T) {
 		}
 	})
 	t.Run("fail to Fetch", func(t *testing.T) {
-		repository.EXPECT().Fetch("test", enum.Temperature, start, end, 0, enum.Asc).Return(nil, errors.New("failed to fetch"))
-		if _, err := service.GetLogs("test", enum.Temperature, start, end); err == nil {
+		repository.EXPECT().Fetch(enum.Temperature, start, end, 0, enum.Asc).Return(nil, errors.New("failed to fetch"))
+		if _, err := service.GetLogs(enum.Temperature, start, end); err == nil {
 			t.Error("expect error but nil")
 		}
 	})
