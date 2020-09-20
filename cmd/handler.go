@@ -45,7 +45,7 @@ func getLogsHandler(c echo.Context) error {
 	}
 
 	service := ouchi.NewOuchi(repository)
-	logs, err := service.GetLogs(roomName, logType, time.Now().AddDate(0, 0, -1), time.Now())
+	logs, err := service.GetLogs(logType, time.Now().AddDate(0, 0, -1), time.Now())
 	if err != nil {
 		return echo.ErrInternalServerError
 	}

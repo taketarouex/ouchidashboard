@@ -13,7 +13,7 @@ import (
 type (
 	// IOuchi is an interface of the ouchi service
 	IOuchi interface {
-		GetLogs(roomName string, logType enum.LogType, start, end time.Time, opts ...getOption) ([]Log, error)
+		GetLogs(logType enum.LogType, start, end time.Time, opts ...getOption) ([]Log, error)
 	}
 	// Ouchi service
 	Ouchi struct {
@@ -30,7 +30,7 @@ type (
 	IRepository interface {
 		SourceID() (string, error)
 		Add([]collector.CollectLog) error
-		Fetch(roomName string, logType enum.LogType, start, end time.Time, limit int, order enum.Order) ([]Log, error)
+		Fetch(logType enum.LogType, start, end time.Time, limit int, order enum.Order) ([]Log, error)
 	}
 	// Log ouchi log
 	Log struct {
@@ -75,7 +75,7 @@ func NewOuchi(repository IRepository) IOuchi {
 }
 
 // GetLogs gets log
-func (o *Ouchi) GetLogs(roomName string, logType enum.LogType, start, end time.Time, opts ...getOption) ([]Log, error) {
+func (o *Ouchi) GetLogs(logType enum.LogType, start, end time.Time, opts ...getOption) ([]Log, error) {
 	options := &getOpts{
 		limit: 0,
 		order: enum.Asc,
@@ -84,7 +84,7 @@ func (o *Ouchi) GetLogs(roomName string, logType enum.LogType, start, end time.T
 		setOpt(options)
 	}
 
-	logs, err := o.repository.Fetch(roomName, logType, start, end, options.limit, options.order)
+	logs, err := o.repository.Fetch(logType, start, end, options.limit, options.order)
 	if err != nil {
 		return nil, err
 	}

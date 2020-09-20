@@ -36,9 +36,9 @@ func (m *MockIOuchi) EXPECT() *MockIOuchiMockRecorder {
 }
 
 // GetLogs mocks base method
-func (m *MockIOuchi) GetLogs(roomName string, logType enum.LogType, start, end time.Time, opts ...getOption) ([]Log, error) {
+func (m *MockIOuchi) GetLogs(logType enum.LogType, start, end time.Time, opts ...getOption) ([]Log, error) {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{roomName, logType, start, end}
+	varargs := []interface{}{logType, start, end}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
@@ -49,9 +49,9 @@ func (m *MockIOuchi) GetLogs(roomName string, logType enum.LogType, start, end t
 }
 
 // GetLogs indicates an expected call of GetLogs
-func (mr *MockIOuchiMockRecorder) GetLogs(roomName, logType, start, end interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockIOuchiMockRecorder) GetLogs(logType, start, end interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{roomName, logType, start, end}, opts...)
+	varargs := append([]interface{}{logType, start, end}, opts...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLogs", reflect.TypeOf((*MockIOuchi)(nil).GetLogs), varargs...)
 }
 
@@ -145,16 +145,16 @@ func (mr *MockIRepositoryMockRecorder) Add(arg0 interface{}) *gomock.Call {
 }
 
 // Fetch mocks base method
-func (m *MockIRepository) Fetch(roomName string, logType enum.LogType, start, end time.Time, limit int, order enum.Order) ([]Log, error) {
+func (m *MockIRepository) Fetch(logType enum.LogType, start, end time.Time, limit int, order enum.Order) ([]Log, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Fetch", roomName, logType, start, end, limit, order)
+	ret := m.ctrl.Call(m, "Fetch", logType, start, end, limit, order)
 	ret0, _ := ret[0].([]Log)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Fetch indicates an expected call of Fetch
-func (mr *MockIRepositoryMockRecorder) Fetch(roomName, logType, start, end, limit, order interface{}) *gomock.Call {
+func (mr *MockIRepositoryMockRecorder) Fetch(logType, start, end, limit, order interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Fetch", reflect.TypeOf((*MockIRepository)(nil).Fetch), roomName, logType, start, end, limit, order)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Fetch", reflect.TypeOf((*MockIRepository)(nil).Fetch), logType, start, end, limit, order)
 }
