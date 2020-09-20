@@ -36,7 +36,7 @@ func (m *MockIOuchi) EXPECT() *MockIOuchiMockRecorder {
 }
 
 // GetLogs mocks base method
-func (m *MockIOuchi) GetLogs(logType enum.LogType, start, end time.Time, opts ...getOption) ([]Log, error) {
+func (m *MockIOuchi) GetLogs(logType enum.LogType, start, end time.Time, opts ...GetOption) ([]Log, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{logType, start, end}
 	for _, a := range opts {

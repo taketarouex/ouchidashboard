@@ -13,7 +13,7 @@ import (
 type (
 	// IOuchi is an interface of the ouchi service
 	IOuchi interface {
-		GetLogs(logType enum.LogType, start, end time.Time, opts ...getOption) ([]Log, error)
+		GetLogs(logType enum.LogType, start, end time.Time, opts ...GetOption) ([]Log, error)
 	}
 	// Ouchi service
 	Ouchi struct {
@@ -42,18 +42,19 @@ type (
 		limit int
 		order enum.Order
 	}
-	getOption func(*getOpts)
+	// GetOption is a type of option
+	GetOption func(*getOpts)
 )
 
 // Limit sets
-func Limit(v int) getOption {
+func Limit(v int) GetOption {
 	return func(g *getOpts) {
 		g.limit = v
 	}
 }
 
 // Order sets order desc or asc.
-func Order(v enum.Order) getOption {
+func Order(v enum.Order) GetOption {
 	return func(g *getOpts) {
 		g.order = v
 	}
@@ -75,7 +76,7 @@ func NewOuchi(repository IRepository) IOuchi {
 }
 
 // GetLogs gets log
-func (o *Ouchi) GetLogs(logType enum.LogType, start, end time.Time, opts ...getOption) ([]Log, error) {
+func (o *Ouchi) GetLogs(logType enum.LogType, start, end time.Time, opts ...GetOption) ([]Log, error) {
 	options := &getOpts{
 		limit: 0,
 		order: enum.Asc,

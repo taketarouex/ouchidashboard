@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	"cloud.google.com/go/firestore"
@@ -51,11 +52,39 @@ func getLogsHandler(c echo.Context) error {
 		return err
 	}
 
-	logs, err := service.GetLogs(logType, start, end)
+	options, err := parseOptions(c)
+	if err != nil {
+		return err
+	}
+
+	logs, err := service.GetLogs(logType, start, end, options...)
 	if err != nil {
 		return echo.ErrInternalServerError
 	}
 	return c.JSON(http.StatusOK, logs)
+}
+
+func parseOptions(c echo.Context) ([]ouchi.GetOption, error) {
+	options := []ouchi.GetOption{}
+	limitParam := c.QueryParam("limit")
+	if limitParam != "" {
+		limit, err := strconv.Atoi(limitParam)
+		if err != nil {
+			log.Printf("err: %v, query parameter limit is expected to be int but got: %s", err, limitParam)
+			return []ouchi.GetOption{}, echo.ErrBadRequest
+		}
+		options = append(options, ouchi.Limit(limit))
+	}
+	orderParam := c.QueryParam("order")
+	if orderParam != "" {
+		order, err := enum.ParseOrder(orderParam)
+		if err != nil {
+			log.Printf("err: %v, query parameter order is expected to be Order but got: %s", err, orderParam)
+			return []ouchi.GetOption{}, echo.ErrBadRequest
+		}
+		options = append(options, ouchi.Order(order))
+	}
+	return options, nil
 }
 
 func parseStartEnd(c echo.Context) (time.Time, time.Time, error) {

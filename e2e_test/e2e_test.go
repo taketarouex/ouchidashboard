@@ -128,6 +128,21 @@ func TestOuchi_E2E(t *testing.T) {
 		defer resp.Body.Close()
 		body, err := ioutil.ReadAll(resp.Body)
 		t.Logf("body: %v", string(body))
+
+		// add options
+		params.Add("limit", "1")
+		params.Add("order", "DESC")
+		baseUrl.RawQuery = params.Encode()
+		resp, err = http.Get(baseUrl.String())
+		if err != nil {
+			t.Errorf("failed to http get due to: %v", err)
+		}
+		if resp.StatusCode != 200 {
+			t.Errorf("failed to get logs due to: %v", resp.Status)
+		}
+		defer resp.Body.Close()
+		body, err = ioutil.ReadAll(resp.Body)
+		t.Logf("body: %v", string(body))
 	})
 
 	t.Run("fail invalid query params", func(t *testing.T) {

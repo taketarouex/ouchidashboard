@@ -11,6 +11,13 @@ var Asc = Order{"ASC"}
 // Desc order
 var Desc = Order{"DESC"}
 
+func (t Order) String() string {
+	if t.value == "" {
+		return "undefined"
+	}
+	return t.value
+}
+
 // LogType includes ouchi environment log types
 type LogType struct{ value string }
 
@@ -46,5 +53,17 @@ func ParseLogType(target string) (LogType, error) {
 		return Motion, nil
 	default:
 		return LogType{}, errors.Errorf("invalid type: %s", target)
+	}
+}
+
+// ParseOrder parses string to Order
+func ParseOrder(target string) (Order, error) {
+	switch target {
+	case Asc.String():
+		return Asc, nil
+	case Desc.String():
+		return Desc, nil
+	default:
+		return Order{}, errors.Errorf("invalid order: %s", target)
 	}
 }
