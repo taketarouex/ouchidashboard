@@ -38,18 +38,48 @@ func getLogsHandler(c echo.Context) error {
 		return echo.ErrInternalServerError
 	}
 
+	service := ouchi.NewOuchi(repository)
+
 	logType, err := enum.ParseLogType(c.Param("logType"))
 	if err != nil {
 		log.Printf("failed to parse logtype: %s", c.Param("logType"))
 		return echo.ErrBadRequest
 	}
 
-	service := ouchi.NewOuchi(repository)
-	logs, err := service.GetLogs(logType, time.Now().AddDate(0, 0, -1), time.Now())
+	start, end, err := parseStartEnd(c)
+	if err != nil {
+		return err
+	}
+
+	logs, err := service.GetLogs(logType, start, end)
 	if err != nil {
 		return echo.ErrInternalServerError
 	}
 	return c.JSON(http.StatusOK, logs)
+}
+
+func parseStartEnd(c echo.Context) (time.Time, time.Time, error) {
+	startParam := c.QueryParam("start")
+	if startParam == "" {
+		log.Print("query parameter start is needed")
+		return time.Time{}, time.Time{}, echo.ErrBadRequest
+	}
+	start, err := time.Parse(time.RFC3339, startParam)
+	if err != nil {
+		log.Printf("start format is RFC3339 but got: %s", startParam)
+		return time.Time{}, time.Time{}, echo.ErrBadRequest
+	}
+	endParam := c.QueryParam("end")
+	if endParam == "" {
+		log.Print("query parameter end is needed")
+		return time.Time{}, time.Time{}, echo.ErrBadRequest
+	}
+	end, err := time.Parse(time.RFC3339, endParam)
+	if err != nil {
+		log.Printf("end format is RFC3339 but got: %s", endParam)
+		return time.Time{}, time.Time{}, echo.ErrBadRequest
+	}
+	return start, end, nil
 }
 
 func collectorHandler(c echo.Context) error {
