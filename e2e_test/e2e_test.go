@@ -9,11 +9,13 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"reflect"
 	"testing"
 	"time"
 
 	"cloud.google.com/go/firestore"
 	"github.com/tktkc72/ouchidashboard/collector"
+	"github.com/tktkc72/ouchidashboard/ouchi"
 )
 
 func TestCollector_E2E(t *testing.T) {
@@ -95,25 +97,24 @@ func TestOuchi_E2E(t *testing.T) {
 		t.Fatalf("failed to create test data")
 	}
 
-	request := collector.Message{
-		RoomNames: []string{doc.ID},
+	testLogs := []ouchi.Log{
+		{Value: 0, UpdatedAt: time.Date(2020, 1, 23, 0, 0, 0, 0, time.UTC), CreatedAt: time.Date(2020, 1, 23, 0, 0, 0, 0, time.UTC)},
+		{Value: 1, UpdatedAt: time.Date(2020, 1, 23, 1, 0, 0, 0, time.UTC), CreatedAt: time.Date(2020, 1, 23, 1, 0, 0, 0, time.UTC)},
+		{Value: 2, UpdatedAt: time.Date(2020, 1, 23, 2, 0, 0, 0, time.UTC), CreatedAt: time.Date(2020, 1, 23, 2, 0, 0, 0, time.UTC)},
 	}
-	requestJson, err := json.Marshal(request)
-	if err != nil {
-		t.Fatalf("failed to create test data wrong request: %s", string(requestJson))
-	}
-	resp, err := http.Post(baseUrl.String(), "application/json", bytes.NewBuffer(requestJson))
-	if err != nil {
-		t.Fatalf("failed to create err: %v", err)
-	}
-	if resp.StatusCode != 200 {
-		t.Fatalf("failed to create Post status: %s", resp.Status)
+
+	for _, testLog := range testLogs {
+		_, _, err := client.Collection(rootPath+"/"+doc.ID+"/temperature").Add(
+			ctx, testLog)
+		if err != nil {
+			t.Fatalf("failed to create test logs due to: %v", err)
+		}
 	}
 
 	baseUrl.Path += fmt.Sprintf("/rooms/%s/logs/temperature", doc.ID)
 	t.Run("success to get logs", func(t *testing.T) {
-		start := time.Now().AddDate(0, 0, -1).Format(time.RFC3339)
-		end := time.Now().Format(time.RFC3339)
+		start := time.Date(2020, 1, 23, 0, 0, 0, 0, time.UTC).Format(time.RFC3339)
+		end := time.Date(2020, 1, 23, 2, 0, 0, 0, time.UTC).Format(time.RFC3339)
 		params := url.Values{}
 		params.Add("start", start)
 		params.Add("end", end)
@@ -126,8 +127,18 @@ func TestOuchi_E2E(t *testing.T) {
 			t.Errorf("failed to get logs due to: %v", resp.Status)
 		}
 		defer resp.Body.Close()
+		actual := new([]ouchi.Log)
 		body, err := ioutil.ReadAll(resp.Body)
-		t.Logf("body: %v", string(body))
+		if err != nil {
+			t.Errorf("failed to read body due to: %v", err)
+		}
+		if err = json.Unmarshal(body, actual); err != nil {
+			t.Errorf("failed to unmarshal due to: %v", err)
+		}
+		expected := testLogs[0:2]
+		if !reflect.DeepEqual(actual, &expected) {
+			t.Errorf("got: %v, expect: %v", actual, &expected)
+		}
 
 		// add options
 		params.Add("limit", "1")
@@ -142,7 +153,16 @@ func TestOuchi_E2E(t *testing.T) {
 		}
 		defer resp.Body.Close()
 		body, err = ioutil.ReadAll(resp.Body)
-		t.Logf("body: %v", string(body))
+		if err != nil {
+			t.Errorf("failed to read body due to: %v", err)
+		}
+		if err = json.Unmarshal(body, actual); err != nil {
+			t.Errorf("failed to unmarshal due to: %v", err)
+		}
+		expected = []ouchi.Log{testLogs[1]}
+		if !reflect.DeepEqual(actual, &expected) {
+			t.Errorf("got: %v, expect: %v", actual, &expected)
+		}
 	})
 
 	t.Run("fail invalid query params", func(t *testing.T) {
