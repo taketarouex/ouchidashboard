@@ -1,26 +1,37 @@
-import dayjs from 'dayjs'
-import { FC } from 'react'
+import CircularProgress from '@material-ui/core/CircularProgress'
 import useSWR from 'swr'
+import dayjs from 'dayjs'
 
 type Log = {
   value: number
   updatedAt: Date
 }
 
-const fetchLogs: (url: string) => Promise<Log[]> = (url) => fetch(url).then(res => res.json())
+const fetchLogs: (url: string) => Promise<Log[]> = (url) => fetch(url).then(
+  res => {
+    if (!res.ok) {
+      const error = new Error('An error occurred while fetching the data.')
+      throw error
+    }
+    return res.json()
+  }
+)
 
-export const RoomGraph = ({ logType }: { logType: string }) => {
-  const start = dayjs().add(-1, 'day').toISOString()
-  const end = dayjs().toISOString()
-  const { data, error } = useSWR(`/rooms/living/logs/${logType}?start=${start}&end=${end}`, fetchLogs)
+const useRoomLog = ({ logType, start, end }: { logType: string, start: dayjs.Dayjs, end: dayjs.Dayjs }) => {
+  const startISO = start.toISOString()
+  const endISO = end.toISOString()
+  const { data, error } = useSWR(`/api/rooms/living/logs/${logType}?start=${startISO}&end=${endISO}`, fetchLogs)
 
-  if (error) return <div>{error.message}</div>
+  return {
+    logs: data,
+    isLoading: !error && !data,
+    isError: error
+  }
+}
 
-  return (
-    <div>
-      {error && <div>{error.message}</div>}
-      {!data && <div>loading.....</div>}
-      {data && data.map((v) => <li>{v}</li>)}
-    </div>
-  )
+export const RoomGraph = ({ logType, start, end }: { logType: string, start: dayjs.Dayjs, end: dayjs.Dayjs }) => {
+  const { logs, isLoading, isError } = useRoomLog({ logType, start, end })
+  if (isLoading) return <CircularProgress />
+  if (isError) return <div>error</div>
+  return <div>{logs.map((v) => <li>{v.value}:{v.updatedAt}</li>)}</div>
 }

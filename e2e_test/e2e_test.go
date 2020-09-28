@@ -111,7 +111,7 @@ func TestOuchi_E2E(t *testing.T) {
 		}
 	}
 
-	baseUrl.Path += fmt.Sprintf("/rooms/%s/logs/temperature", doc.ID)
+	baseUrl.Path += fmt.Sprintf("/api/rooms/%s/logs/temperature", doc.ID)
 	t.Run("success to get logs", func(t *testing.T) {
 		start := time.Date(2020, 1, 23, 0, 0, 0, 0, time.UTC).Format(time.RFC3339)
 		end := time.Date(2020, 1, 23, 2, 0, 0, 0, time.UTC).Format(time.RFC3339)
