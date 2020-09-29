@@ -17,10 +17,10 @@ const fetchLogs: (url: string) => Promise<Log[]> = (url) => fetch(url).then(
   }
 )
 
-const useRoomLog = ({ logType, start, end }: { logType: string, start: dayjs.Dayjs, end: dayjs.Dayjs }) => {
+const useRoomLog = ({ roomName, logType, start, end }: { roomName: string, logType: string, start: dayjs.Dayjs, end: dayjs.Dayjs }) => {
   const startISO = start.toISOString()
   const endISO = end.toISOString()
-  const { data, error } = useSWR(`/api/rooms/living/logs/${logType}?start=${startISO}&end=${endISO}`, fetchLogs)
+  const { data, error } = useSWR(`/api/rooms/${roomName}/logs/${logType}?start=${startISO}&end=${endISO}`, fetchLogs)
 
   return {
     logs: data,
@@ -29,8 +29,8 @@ const useRoomLog = ({ logType, start, end }: { logType: string, start: dayjs.Day
   }
 }
 
-export const RoomGraph = ({ logType, start, end }: { logType: string, start: dayjs.Dayjs, end: dayjs.Dayjs }) => {
-  const { logs, isLoading, isError } = useRoomLog({ logType, start, end })
+export const RoomGraph = ({ roomName, logType, start, end }: { roomName: string, logType: string, start: dayjs.Dayjs, end: dayjs.Dayjs }) => {
+  const { logs, isLoading, isError } = useRoomLog({ roomName, logType, start, end })
   if (isLoading) return <CircularProgress />
   if (isError) return <div>error</div>
   return <div>{logs.map((v) => <li>{v.value}:{v.updatedAt}</li>)}</div>
