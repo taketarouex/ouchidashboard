@@ -13,7 +13,7 @@ export default function Home() {
       </Head>
       <section>
         <h1>{siteTitle}</h1>
-        <RoomGraph logType={"temperature"} start={start} end={end} />
+        <RoomGraph roomName={"living"} logType={"temperature"} start={start} end={end} />
       </section>
     </Layout>
   )
