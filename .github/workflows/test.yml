@@ -8,7 +8,7 @@ on:
     - 'cloudbuild.yaml'
 
 jobs:
-  test:
+  backend_test:
     name: Backend Test
     runs-on: ubuntu-latest
     steps:
@@ -35,6 +35,7 @@ jobs:
           FIRESTORE_ROOT_PATH: test
           GCP_PROJECT: test
         run: make e2e_test
+  frontend_test:
     name: Frontend Test
     runs-on: ubuntu-latest
     steps:
