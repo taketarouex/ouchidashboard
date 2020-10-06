@@ -1,3 +1,4 @@
+import React from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress'
 import useSWR from 'swr'
 import dayjs from 'dayjs'
@@ -33,5 +34,5 @@ export const RoomGraph = ({ roomName, logType, start, end }: { roomName: string,
   const { logs, isLoading, isError } = useRoomLog({ roomName, logType, start, end })
   if (isLoading) return <CircularProgress />
   if (isError) return <div>error</div>
-  return <div>{logs.map((v) => <li>{v.value}:{v.updatedAt}</li>)}</div>
+  return <div>{logs.map((v) => <li key={`${v.value}:${v.updatedAt}`}>`{v.value}{v.updatedAt}`</li>)}</div>
 }
