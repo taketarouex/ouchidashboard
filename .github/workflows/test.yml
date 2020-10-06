@@ -42,5 +42,5 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Test
-        run: cd frontend; npm run test
+        run: cd frontend; npm install; npm run test
 
