@@ -1,5 +1,6 @@
 import React from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress'
+import { LineChart } from 'recharts'
 import useSWR from 'swr'
 import dayjs from 'dayjs'
 
@@ -24,15 +25,21 @@ const useRoomLog = ({ roomName, logType, start, end }: { roomName: string, logTy
   const { data, error } = useSWR(`/api/rooms/${roomName}/logs/${logType}?start=${startISO}&end=${endISO}`, fetchLogs)
 
   return {
-    logs: data,
+    data: data,
     isLoading: !error && !data,
     isError: error
   }
 }
 
 export const RoomGraph = ({ roomName, logType, start, end }: { roomName: string, logType: string, start: dayjs.Dayjs, end: dayjs.Dayjs }) => {
-  const { logs, isLoading, isError } = useRoomLog({ roomName, logType, start, end })
+  const { data, isLoading, isError } = useRoomLog({ roomName, logType, start, end })
   if (isLoading) return <CircularProgress />
   if (isError) return <div>error</div>
-  return <div>{logs.map((v) => <li key={`${v.value}:${v.updatedAt}`}>`{v.value}{v.updatedAt}`</li>)}</div>
+  return (
+    <LineChart
+      width={400}
+      height={400}
+      data={data}
+    >
+    </LineChart>)
 }
