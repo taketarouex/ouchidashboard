@@ -1,1 +1,13 @@
-This is a starter template for [Learn Next.js](https://nextjs.org/learn).
+# ouchidashboard frontend
+
+## Install
+
+`npm install`
+
+## Test
+
+`npm run test`
+
+## Run Dev Server
+
+`npm run dev`
