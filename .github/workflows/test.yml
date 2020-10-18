@@ -51,5 +51,5 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: e2e diff snapshots
-          path: frontend/test/e2e/__image_snapshots__/__diff_outputs__/
+          path: frontend/test/e2e/__image_snapshots__/__diff_output__/
 
