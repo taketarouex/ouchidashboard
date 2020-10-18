@@ -1,12 +1,12 @@
 import React from 'react';
-import { render, waitForElementToBeRemoved, screen } from '@testing-library/react'
-import { RoomGraph } from '../roomGraph'
+import { render, waitForElementToBeRemoved } from '@testing-library/react'
+import { RoomChart } from '../roomChart'
 import '@testing-library/jest-dom'
 import dayjs from 'dayjs'
 
 import { enableFetchMocks } from 'jest-fetch-mock'
 
-test('RoomGraph', async () => {
+test('RoomChart', async () => {
   enableFetchMocks()
   fetchMock.mockResponseOnce(
     JSON.stringify([
@@ -15,7 +15,7 @@ test('RoomGraph', async () => {
   const start = dayjs(new Date(2020, 7, 31, 0, 0, 0, 0))
   const end = dayjs(new Date(2020, 7, 31, 10, 0, 0, 0))
 
-  const { container, getByRole } = render(<RoomGraph roomName={"test"} logType={"test"} start={start} end={end} />)
+  const { container, getByRole } = render(<RoomChart roomName={"test"} logType={"test"} start={start} end={end} />)
   expect(fetchMock).toBeCalledWith(
     `/api/rooms/test/logs/test?start=${start.toISOString()}&end=${end.toISOString()}`)
   await waitForElementToBeRemoved(getByRole("progressbar"))
