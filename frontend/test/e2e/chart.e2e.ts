@@ -3,19 +3,19 @@ import dayjs from 'dayjs';
 const apiEndpoint = "http://localhost:3000/api";
 const uiEndpoint = "http://localhost:3000"
 
-test('graph', async () => {
+test('chart', async () => {
   const temperatureLogs = [
     {
-      value: 0,
-      updatedAt: dayjs(new Date(2020, 7, 31, 0, 0, 0, 0))
+      Value: 0,
+      UpdatedAt: dayjs("2020-07-31T00:00:00Z")
     },
     {
-      value: 1,
-      updatedAt: dayjs(new Date(2020, 7, 31, 1, 0, 0, 0))
+      Value: 1,
+      UpdatedAt: dayjs("2020-07-31T01:00:00Z")
     },
     {
-      value: 2,
-      updatedAt: dayjs(new Date(2020, 7, 31, 2, 0, 0, 0))
+      Value: 2,
+      UpdatedAt: dayjs("2020-07-31T02:00:00Z")
     },
   ]
   page.setDefaultNavigationTimeout(0);

@@ -6,7 +6,7 @@ import dayjs from 'dayjs'
 
 import { enableFetchMocks } from 'jest-fetch-mock'
 
-test('RoomGraph', async () => {
+test('RoomChart', async () => {
   enableFetchMocks()
   fetchMock.mockResponseOnce(
     JSON.stringify([

@@ -1,12 +1,12 @@
 import React from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress'
-import { LineChart } from 'recharts'
+import { LineChart, XAxis, YAxis, Line, Tooltip, ResponsiveContainer } from 'recharts'
 import useSWR from 'swr'
 import dayjs from 'dayjs'
 
 type Log = {
-  value: number
-  updatedAt: Date
+  Value: number
+  UpdatedAt: Date
 }
 
 const fetchLogs: (url: string) => Promise<Log[]> = (url) => fetch(url).then(
@@ -36,10 +36,15 @@ export const RoomChart = ({ roomName, logType, start, end }: { roomName: string,
   if (isLoading) return <CircularProgress />
   if (isError) return <div>error</div>
   return (
-    <LineChart
-      width={400}
-      height={400}
-      data={data}
-    >
-    </LineChart>)
+    <ResponsiveContainer width={'90%'} height={400}>
+      <LineChart
+        data={data}
+      >
+        <YAxis />
+        <XAxis dataKey="UpdatedAt" domain={['dataMin', 'dataMax']} />
+        <Line type="monotone" dataKey="Value" stroke="#8884d8" />
+        <Tooltip />
+      </LineChart>
+    </ResponsiveContainer>
+  )
 }
