@@ -4,5 +4,5 @@ import { cache } from 'swr'
 
 Enzyme.configure({ adapter: new Adapter() });
 afterEach(() => {
-    cache.clear();
+  cache.clear();
 })
