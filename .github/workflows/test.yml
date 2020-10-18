@@ -43,4 +43,6 @@ jobs:
         uses: actions/checkout@v2
       - name: Test
         run: cd frontend; npm install; npm run test
+      - name: Frontend e2e
+        run: npm run test:e2e-ci
 
