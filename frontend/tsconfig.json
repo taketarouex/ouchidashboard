@@ -22,7 +22,8 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "server.js"
+    "server.js",
+    "jest-puppeteer.config.js"
   ],
   "exclude": [
     "node_modules"

@@ -1,4 +1,4 @@
-# ouchi
+# ouchidashboard
 
 store and display data related to `ouchi` life
 
