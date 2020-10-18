@@ -44,5 +44,12 @@ jobs:
       - name: Test
         run: cd frontend; npm install; npm run test
       - name: E2E Test
+        id: frontend_e2e
         run: cd frontend; npm install; npm run test:e2e-ci
+      - name: Upload package file to artifact
+        if: failure() && steps.frontend_e2e.outcome == 'failure'
+        uses: actions/upload-artifact@v1
+        with:
+          name: e2e diff snapshots
+          path: frontend/test/e2e/__image_snapshots__/__diff_outputs__/
 
