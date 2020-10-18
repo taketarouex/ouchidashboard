@@ -23,6 +23,7 @@ func TestCollector_E2E(t *testing.T) {
 	rootPath := os.Getenv("FIRESTORE_ROOT_PATH")
 	deviceID := os.Getenv("NATURE_REMO_DEVICE_ID")
 	baseUrl, _ := url.Parse("http://localhost:8080")
+	roomName := "testRoom"
 
 	ctx := context.Background()
 	client, err := firestore.NewClient(ctx, projectID)
@@ -31,14 +32,14 @@ func TestCollector_E2E(t *testing.T) {
 	}
 	defer client.Close()
 	// setup test data
-	doc, _, err := client.Collection(rootPath).Add(ctx, map[string]string{"sourceID": deviceID})
+	_, err = client.Doc(fmt.Sprintf("%s/%s", rootPath, roomName)).Create(ctx, map[string]string{"sourceID": deviceID})
 	if err != nil {
 		t.Fatalf("failed to create test data")
 	}
 
 	t.Run("success to collect", func(t *testing.T) {
 		request := collector.Message{
-			RoomNames: []string{doc.ID},
+			RoomNames: []string{roomName},
 		}
 		requestJson, err := json.Marshal(request)
 		if err != nil {
@@ -56,7 +57,7 @@ func TestCollector_E2E(t *testing.T) {
 	})
 	t.Run("fail invalid roomName", func(t *testing.T) {
 		request := collector.Message{
-			RoomNames: []string{doc.ID, "test"},
+			RoomNames: []string{roomName, "invalidRoom"},
 		}
 		requestJson, err := json.Marshal(request)
 		if err != nil {
@@ -74,7 +75,7 @@ func TestCollector_E2E(t *testing.T) {
 	})
 
 	// delete test data
-	if _, err = doc.Delete(ctx); err != nil {
+	if _, err = client.Doc(fmt.Sprintf("%s/%s", rootPath, roomName)).Delete(ctx); err != nil {
 		t.Fatalf("failed to delete test data")
 	}
 }
@@ -84,6 +85,7 @@ func TestOuchi_E2E(t *testing.T) {
 	rootPath := os.Getenv("FIRESTORE_ROOT_PATH")
 	deviceID := os.Getenv("NATURE_REMO_DEVICE_ID")
 	baseUrl, _ := url.Parse("http://localhost:8080")
+	roomName := "testRoom"
 
 	ctx := context.Background()
 	client, err := firestore.NewClient(ctx, projectID)
@@ -92,7 +94,7 @@ func TestOuchi_E2E(t *testing.T) {
 	}
 	defer client.Close()
 	// setup test data
-	doc, _, err := client.Collection(rootPath).Add(ctx, map[string]string{"sourceID": deviceID})
+	_, err = client.Doc(fmt.Sprintf("%s/%s", rootPath, roomName)).Create(ctx, map[string]string{"sourceID": deviceID})
 	if err != nil {
 		t.Fatalf("failed to create test data")
 	}
@@ -104,14 +106,13 @@ func TestOuchi_E2E(t *testing.T) {
 	}
 
 	for _, testLog := range testLogs {
-		_, _, err := client.Collection(rootPath+"/"+doc.ID+"/temperature").Add(
-			ctx, testLog)
+		_, _, err := client.Collection(fmt.Sprintf("%s/%s/temperature", rootPath, roomName)).Add(ctx, testLog)
 		if err != nil {
 			t.Fatalf("failed to create test logs due to: %v", err)
 		}
 	}
 
-	baseUrl.Path += fmt.Sprintf("/api/rooms/%s/logs/temperature", doc.ID)
+	baseUrl.Path += fmt.Sprintf("/api/rooms/%s/logs/temperature", roomName)
 	t.Run("success to get logs", func(t *testing.T) {
 		start := time.Date(2020, 1, 23, 0, 0, 0, 0, time.UTC).Format(time.RFC3339)
 		end := time.Date(2020, 1, 23, 2, 0, 0, 0, time.UTC).Format(time.RFC3339)
@@ -214,7 +215,7 @@ func TestOuchi_E2E(t *testing.T) {
 	})
 
 	// delete test data
-	if _, err = doc.Delete(ctx); err != nil {
+	if _, err = client.Doc(fmt.Sprintf("%s/%s", rootPath, roomName)).Delete(ctx); err != nil {
 		t.Fatalf("failed to delete test data")
 	}
 }
