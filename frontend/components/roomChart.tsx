@@ -31,7 +31,7 @@ const useRoomLog = ({ roomName, logType, start, end }: { roomName: string, logTy
   }
 }
 
-export const RoomGraph = ({ roomName, logType, start, end }: { roomName: string, logType: string, start: dayjs.Dayjs, end: dayjs.Dayjs }) => {
+export const RoomChart = ({ roomName, logType, start, end }: { roomName: string, logType: string, start: dayjs.Dayjs, end: dayjs.Dayjs }) => {
   const { data, isLoading, isError } = useRoomLog({ roomName, logType, start, end })
   if (isLoading) return <CircularProgress />
   if (isError) return <div>error</div>
