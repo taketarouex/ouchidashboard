@@ -32,5 +32,9 @@ test('graph', async () => {
   })
   await page.goto(`${uiEndpoint}`, { waitUntil: ['networkidle2'] })
   const rendered = await page.screenshot();
-  expect(rendered).toMatchImageSnapshot();
+  expect(rendered).toMatchImageSnapshot({
+    comparisonMethod: 'ssim',
+    failureThreshold: 0.01,
+    failureThresholdType: 'percent'
+  });
 })
