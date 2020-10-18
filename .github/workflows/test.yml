@@ -44,5 +44,5 @@ jobs:
       - name: Test
         run: cd frontend; npm install; npm run test
       - name: Frontend e2e
-        run: cd frontend; npm install; ls; npm run test:e2e-ci
+        run: cd frontend; npm install; ls test/e2e; npm run test:e2e-ci
 
