@@ -45,5 +45,7 @@ jobs:
         run: cd frontend; npm install; npm run test
       - name: E2E Test Build
         run: docker build -f frontend/Dockerfile.test . -t ouchidashboard_frontend_e2e
+      - name: chmod
+        run: chmod -R 777 frontend
       - name: E2E Test
         run: docker run -i --cap-add=SYS_ADMIN --rm -v `pwd`:/home/pptruser ouchidashboard_frontend_e2e bash -c "cd frontend; npm run test:e2e-ci"
