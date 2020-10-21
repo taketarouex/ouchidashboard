@@ -9,7 +9,7 @@
     "start": "next start",
     "test": "jest",
     "test:coverage": "jest --collect-coverage",
-    "test:e2e": "jest -c ./test/e2e/jest.config.js --watch",
+    "test:e2e": "jest -c ./test/e2e/jest.config.js --watchAll",
     "test:e2e-ci": "jest -c ./test/e2e/jest.config.js"
   },
   "dependencies": {
