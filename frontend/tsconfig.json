@@ -23,7 +23,7 @@
     "**/*.ts",
     "**/*.tsx",
     "server.js",
-    "jest-puppeteer.config.js"
+    "jest-puppeteer.config.js", "next.config.js"
   ],
   "exclude": [
     "node_modules"
