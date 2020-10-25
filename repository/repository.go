@@ -50,11 +50,8 @@ func (r *Repository) SourceID(roomName string) (string, error) {
 func (r *Repository) existRoom(roomName string) error {
 	ctx := context.Background()
 	ref := r.rootCollection.Doc(roomName)
-	snap, err := ref.Get(ctx)
+	_, err := ref.Get(ctx)
 	if err != nil {
-		return err
-	}
-	if !snap.Exists() {
 		return &ouchi.NoRoomErr{S: fmt.Sprintf("no room name: %s", roomName)}
 	}
 	return nil

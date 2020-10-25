@@ -84,7 +84,7 @@ func TestOuchi_E2E(t *testing.T) {
 	projectID := os.Getenv("GCP_PROJECT")
 	rootPath := os.Getenv("FIRESTORE_ROOT_PATH")
 	deviceID := os.Getenv("NATURE_REMO_DEVICE_ID")
-	baseUrl, _ := url.Parse("http://localhost:8080")
+	baseUrl := "http://localhost:8080"
 	roomName := "testRoom"
 
 	ctx := context.Background()
@@ -112,15 +112,19 @@ func TestOuchi_E2E(t *testing.T) {
 		}
 	}
 
-	baseUrl.Path += fmt.Sprintf("/api/rooms/%s/logs/temperature", roomName)
 	t.Run("success to get logs", func(t *testing.T) {
+		apiUrl, err := url.Parse(baseUrl)
+		if err != nil {
+			t.Fatalf("failed to parse url %v", err)
+		}
+		apiUrl.Path += fmt.Sprintf("/api/rooms/%s/logs/temperature", roomName)
 		start := time.Date(2020, 1, 23, 0, 0, 0, 0, time.UTC).Format(time.RFC3339)
 		end := time.Date(2020, 1, 23, 2, 0, 0, 0, time.UTC).Format(time.RFC3339)
 		params := url.Values{}
 		params.Add("start", start)
 		params.Add("end", end)
-		baseUrl.RawQuery = params.Encode()
-		resp, err := http.Get(baseUrl.String())
+		apiUrl.RawQuery = params.Encode()
+		resp, err := http.Get(apiUrl.String())
 		if err != nil {
 			t.Errorf("failed to http get due to: %v", err)
 		}
@@ -144,8 +148,8 @@ func TestOuchi_E2E(t *testing.T) {
 		// add options
 		params.Add("limit", "1")
 		params.Add("order", "DESC")
-		baseUrl.RawQuery = params.Encode()
-		resp, err = http.Get(baseUrl.String())
+		apiUrl.RawQuery = params.Encode()
+		resp, err = http.Get(apiUrl.String())
 		if err != nil {
 			t.Errorf("failed to http get due to: %v", err)
 		}
@@ -167,12 +171,17 @@ func TestOuchi_E2E(t *testing.T) {
 	})
 
 	t.Run("fail invalid query params", func(t *testing.T) {
+		apiUrl, err := url.Parse(baseUrl)
+		if err != nil {
+			t.Fatalf("failed to parse url %v", err)
+		}
+		apiUrl.Path += fmt.Sprintf("/api/rooms/%s/logs/temperature", roomName)
 		start := time.Now().AddDate(0, 0, -1).Format(time.RFC3339)
 		end := time.Now().Format(time.RFC3339)
 		params := url.Values{}
 		params.Add("start", start)
-		baseUrl.RawQuery = params.Encode()
-		resp, err := http.Get(baseUrl.String())
+		apiUrl.RawQuery = params.Encode()
+		resp, err := http.Get(apiUrl.String())
 		if err != nil {
 			t.Errorf("failed to http get due to: %v", err)
 		}
@@ -181,7 +190,7 @@ func TestOuchi_E2E(t *testing.T) {
 		}
 		params.Del("start")
 		params.Add("end", end)
-		baseUrl.RawQuery = params.Encode()
+		apiUrl.RawQuery = params.Encode()
 		if err != nil {
 			t.Errorf("failed to http get due to: %v", err)
 		}
@@ -193,8 +202,8 @@ func TestOuchi_E2E(t *testing.T) {
 		invalidStart := time.Now().AddDate(0, 0, -1).Format(time.RFC1123)
 		invalidEnd := time.Now().Format(time.RFC1123)
 		params.Add("start", invalidStart)
-		baseUrl.RawQuery = params.Encode()
-		resp, err = http.Get(baseUrl.String())
+		apiUrl.RawQuery = params.Encode()
+		resp, err = http.Get(apiUrl.String())
 		if err != nil {
 			t.Errorf("failed to http get due to: %v", err)
 		}
@@ -204,14 +213,42 @@ func TestOuchi_E2E(t *testing.T) {
 
 		params.Set("start", start)
 		params.Set("end", invalidEnd)
-		baseUrl.RawQuery = params.Encode()
-		resp, err = http.Get(baseUrl.String())
+		apiUrl.RawQuery = params.Encode()
+		resp, err = http.Get(apiUrl.String())
 		if err != nil {
 			t.Errorf("failed to http get due to: %v", err)
 		}
 		if resp.StatusCode != 400 {
 			t.Errorf("expected 400 but got: %v", resp.Status)
 		}
+	})
+
+	t.Run("fail invalid url parameter", func(t *testing.T) {
+		apiUrl, err := url.Parse(baseUrl)
+		if err != nil {
+			t.Fatalf("failed to parse url %v", err)
+		}
+		apiUrl.Path += fmt.Sprintf("/api/rooms/%s/logs/temperature", "notFoundRoom")
+		start := time.Date(2020, 1, 23, 0, 0, 0, 0, time.UTC).Format(time.RFC3339)
+		end := time.Date(2020, 1, 23, 2, 0, 0, 0, time.UTC).Format(time.RFC3339)
+		params := url.Values{}
+		params.Add("start", start)
+		params.Add("end", end)
+		apiUrl.RawQuery = params.Encode()
+		resp, err := http.Get(apiUrl.String())
+		if err != nil {
+			t.Errorf("failed to http get due to: %v", err)
+		}
+		if resp.StatusCode != 400 {
+			t.Errorf("expected 400 but got: %v", resp.Status)
+		}
+	})
+	t.Run("success to get room names", func(t *testing.T) {
+		apiUrl, err := url.Parse(baseUrl)
+		if err != nil {
+			t.Fatalf("failed to parse url %v", err)
+		}
+		apiUrl.Path += fmt.Sprintf("/api/rooms/%s/logs/temperature", "notFoundRoom")
 	})
 
 	// delete test data
