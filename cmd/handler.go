@@ -17,10 +17,34 @@ import (
 	"github.com/tktkc72/ouchidashboard/repository"
 )
 
-func getLogsHandler(c echo.Context) error {
-	projectID := os.Getenv("GCP_PROJECT")
-	rootPath := os.Getenv("FIRESTORE_ROOT_PATH")
+var projectID = os.Getenv("GCP_PROJECT")
+var rootPath = os.Getenv("FIRESTORE_ROOT_PATH")
+var accessToken = os.Getenv("NATURE_REMO_ACCESS_TOKEN")
 
+func getRoomNamesHandler(c echo.Context) error {
+	ctx := context.Background()
+	firestoreClient, err := firestore.NewClient(ctx, projectID)
+	if err != nil {
+		log.Printf("failed to create firestore client due to: %v", err)
+		return echo.ErrInternalServerError
+	}
+	defer firestoreClient.Close()
+
+	repository, err := repository.NewRepository(firestoreClient, rootPath, &collector.NowTime{})
+	if err != nil {
+		return echo.ErrInternalServerError
+	}
+
+	service := ouchi.NewOuchi(repository)
+
+	roomNames, err := service.GetRoomNames()
+	if err != nil {
+		return echo.ErrInternalServerError
+	}
+	return c.JSON(http.StatusOK, roomNames)
+}
+
+func getLogsHandler(c echo.Context) error {
 	ctx := context.Background()
 	firestoreClient, err := firestore.NewClient(ctx, projectID)
 	if err != nil {
@@ -111,10 +135,6 @@ func parseStartEnd(c echo.Context) (time.Time, time.Time, error) {
 }
 
 func collectorHandler(c echo.Context) error {
-	accessToken := os.Getenv("NATURE_REMO_ACCESS_TOKEN")
-	projectID := os.Getenv("GCP_PROJECT")
-	rootPath := os.Getenv("FIRESTORE_ROOT_PATH")
-
 	m := new(collector.Message)
 	if err := c.Bind(m); err != nil {
 		return err

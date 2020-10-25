@@ -14,6 +14,7 @@ func main() {
 	e.Use(middleware.Logger())
 	e.POST("/", collectorHandler)
 	e.GET("/api/rooms/:roomName/logs/:logType", getLogsHandler)
+	e.GET("/api/rooms", getRoomNamesHandler)
 	e.Static("/ui", "ui")
 	e.Static("/_next", "ui/_next")
 	port := os.Getenv("PORT")

@@ -248,7 +248,27 @@ func TestOuchi_E2E(t *testing.T) {
 		if err != nil {
 			t.Fatalf("failed to parse url %v", err)
 		}
-		apiUrl.Path += fmt.Sprintf("/api/rooms/%s/logs/temperature", "notFoundRoom")
+		apiUrl.Path += "/api/rooms"
+		resp, err := http.Get(apiUrl.String())
+		if err != nil {
+			t.Errorf("failed to http get due to: %v", err)
+		}
+		if resp.StatusCode != 200 {
+			t.Errorf("failed to get logs due to: %v", resp.Status)
+		}
+		defer resp.Body.Close()
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			t.Errorf("failed to read body due to: %v", err)
+		}
+		actual := new([]string)
+		if err = json.Unmarshal(body, actual); err != nil {
+			t.Errorf("failed to unmarshal due to: %v", err)
+		}
+		expected := []string{roomName}
+		if !reflect.DeepEqual(actual, &expected) {
+			t.Errorf("got: %v, expect: %v", actual, &expected)
+		}
 	})
 
 	// delete test data
