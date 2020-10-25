@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/golang/mock/gomock"
+	"github.com/google/go-cmp/cmp"
 	"github.com/pkg/errors"
 	"github.com/tktkc72/ouchidashboard/enum"
 )
@@ -67,5 +68,30 @@ func TestOuchi_GetLogs(t *testing.T) {
 			t.Error("expect error but nil")
 		}
 	})
+}
 
+func TestOuchi_GetRoomNames(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	repository := NewMockIRepository(ctrl)
+	service := NewOuchi(repository)
+
+	t.Run("success to fetch", func(t *testing.T) {
+		expected := []string{"hoge", "fuga", "bar"}
+		repository.EXPECT().FetchRoomNames().Return(expected, nil)
+		roomNames, err := service.GetRoomNames()
+		if err != nil {
+			t.Errorf("failed to get room names, due to: %v", err)
+		}
+		if !cmp.Equal(expected, roomNames) {
+			t.Errorf("expect: %v, but got: %v", expected, roomNames)
+		}
+	})
+	t.Run("fail to fetch", func(t *testing.T) {
+		repository.EXPECT().FetchRoomNames().Return([]string{}, errors.New("failed to fetch"))
+		if _, err := service.GetRoomNames(); err == nil {
+			t.Error("expect error but nil")
+		}
+	})
 }

@@ -14,6 +14,7 @@ type (
 	// IOuchi is an interface of the ouchi service
 	IOuchi interface {
 		GetLogs(logType enum.LogType, start, end time.Time, opts ...GetOption) ([]Log, error)
+		GetRoomNames() (roomNames []string, err error)
 	}
 	// Ouchi service
 	Ouchi struct {
@@ -31,6 +32,7 @@ type (
 		SourceID() (string, error)
 		Add([]collector.CollectLog) error
 		Fetch(logType enum.LogType, start, end time.Time, limit int, order enum.Order) ([]Log, error)
+		FetchRoomNames() (roomNames []string, err error)
 	}
 	// Log ouchi log
 	Log struct {
@@ -91,4 +93,9 @@ func (o *Ouchi) GetLogs(logType enum.LogType, start, end time.Time, opts ...GetO
 	}
 
 	return logs, nil
+}
+
+// GetRoomNames gets room names
+func (o *Ouchi) GetRoomNames() (roomNames []string, err error) {
+	return []string{}, nil
 }

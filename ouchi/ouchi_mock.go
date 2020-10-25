@@ -55,6 +55,21 @@ func (mr *MockIOuchiMockRecorder) GetLogs(logType, start, end interface{}, opts 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLogs", reflect.TypeOf((*MockIOuchi)(nil).GetLogs), varargs...)
 }
 
+// GetRoomNames mocks base method
+func (m *MockIOuchi) GetRoomNames() ([]string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetRoomNames")
+	ret0, _ := ret[0].([]string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetRoomNames indicates an expected call of GetRoomNames
+func (mr *MockIOuchiMockRecorder) GetRoomNames() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRoomNames", reflect.TypeOf((*MockIOuchi)(nil).GetRoomNames))
+}
+
 // MocknoRoom is a mock of noRoom interface
 type MocknoRoom struct {
 	ctrl     *gomock.Controller
@@ -157,4 +172,19 @@ func (m *MockIRepository) Fetch(logType enum.LogType, start, end time.Time, limi
 func (mr *MockIRepositoryMockRecorder) Fetch(logType, start, end, limit, order interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Fetch", reflect.TypeOf((*MockIRepository)(nil).Fetch), logType, start, end, limit, order)
+}
+
+// FetchRoomNames mocks base method
+func (m *MockIRepository) FetchRoomNames() ([]string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FetchRoomNames")
+	ret0, _ := ret[0].([]string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FetchRoomNames indicates an expected call of FetchRoomNames
+func (mr *MockIRepositoryMockRecorder) FetchRoomNames() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FetchRoomNames", reflect.TypeOf((*MockIRepository)(nil).FetchRoomNames))
 }
