@@ -30,8 +30,10 @@ And set the access token and the device id to environments.
 
 `export NATURE_REMO_ACCESS_TOKEN=${NATURE_REMO_ACCESS_TOKEN}`
 `export NATURE_REMO_DEVICE_ID=${NATURE_REMO_DEVICE_ID}`
+`export FIRESTORE_EMULATOR_HOST=firestore:8812`
 `docker-compose up -d`
 `make e2e_test`
+`docker-compose down`
 
 ## CI
 

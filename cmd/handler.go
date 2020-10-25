@@ -30,12 +30,8 @@ func getLogsHandler(c echo.Context) error {
 	defer firestoreClient.Close()
 
 	roomName := c.Param("roomName")
-	repository, err := repository.NewRepository(firestoreClient, rootPath, roomName, &collector.NowTime{})
+	repository, err := repository.NewRepository(firestoreClient, rootPath, &collector.NowTime{})
 	if err != nil {
-		log.Printf("create repository: %v", err)
-		if ouchi.IsNoRoom(err) {
-			return echo.ErrBadRequest
-		}
 		return echo.ErrInternalServerError
 	}
 
@@ -57,8 +53,11 @@ func getLogsHandler(c echo.Context) error {
 		return err
 	}
 
-	logs, err := service.GetLogs(logType, start, end, options...)
+	logs, err := service.GetLogs(roomName, logType, start, end, options...)
 	if err != nil {
+		if ouchi.IsNoRoom(err) {
+			return echo.ErrBadRequest
+		}
 		return echo.ErrInternalServerError
 	}
 	return c.JSON(http.StatusOK, logs)
@@ -148,14 +147,14 @@ func collect(accessToken, roomName, projectID, rootPath string, c chan error) {
 		return
 	}
 	defer firestoreClient.Close()
-	repository, err := repository.NewRepository(firestoreClient, rootPath, roomName, &collector.NowTime{})
+	repository, err := repository.NewRepository(firestoreClient, rootPath, &collector.NowTime{})
 	if err != nil {
 		c <- err
 		return
 	}
 
 	service := collector.NewCollectorService(fetcher, repository)
-	err = service.Collect()
+	err = service.Collect(roomName)
 	if err != nil {
 		c <- err
 		return

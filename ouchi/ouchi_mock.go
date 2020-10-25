@@ -36,9 +36,9 @@ func (m *MockIOuchi) EXPECT() *MockIOuchiMockRecorder {
 }
 
 // GetLogs mocks base method
-func (m *MockIOuchi) GetLogs(logType enum.LogType, start, end time.Time, opts ...GetOption) ([]Log, error) {
+func (m *MockIOuchi) GetLogs(roomName string, logType enum.LogType, start, end time.Time, opts ...GetOption) ([]Log, error) {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{logType, start, end}
+	varargs := []interface{}{roomName, logType, start, end}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
@@ -49,9 +49,9 @@ func (m *MockIOuchi) GetLogs(logType enum.LogType, start, end time.Time, opts ..
 }
 
 // GetLogs indicates an expected call of GetLogs
-func (mr *MockIOuchiMockRecorder) GetLogs(logType, start, end interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockIOuchiMockRecorder) GetLogs(roomName, logType, start, end interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{logType, start, end}, opts...)
+	varargs := append([]interface{}{roomName, logType, start, end}, opts...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLogs", reflect.TypeOf((*MockIOuchi)(nil).GetLogs), varargs...)
 }
 
@@ -131,47 +131,47 @@ func (m *MockIRepository) EXPECT() *MockIRepositoryMockRecorder {
 }
 
 // SourceID mocks base method
-func (m *MockIRepository) SourceID() (string, error) {
+func (m *MockIRepository) SourceID(roomName string) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SourceID")
+	ret := m.ctrl.Call(m, "SourceID", roomName)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // SourceID indicates an expected call of SourceID
-func (mr *MockIRepositoryMockRecorder) SourceID() *gomock.Call {
+func (mr *MockIRepositoryMockRecorder) SourceID(roomName interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SourceID", reflect.TypeOf((*MockIRepository)(nil).SourceID))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SourceID", reflect.TypeOf((*MockIRepository)(nil).SourceID), roomName)
 }
 
 // Add mocks base method
-func (m *MockIRepository) Add(arg0 []collector.CollectLog) error {
+func (m *MockIRepository) Add(roomName string, collected []collector.CollectLog) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Add", arg0)
+	ret := m.ctrl.Call(m, "Add", roomName, collected)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Add indicates an expected call of Add
-func (mr *MockIRepositoryMockRecorder) Add(arg0 interface{}) *gomock.Call {
+func (mr *MockIRepositoryMockRecorder) Add(roomName, collected interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Add", reflect.TypeOf((*MockIRepository)(nil).Add), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Add", reflect.TypeOf((*MockIRepository)(nil).Add), roomName, collected)
 }
 
 // Fetch mocks base method
-func (m *MockIRepository) Fetch(logType enum.LogType, start, end time.Time, limit int, order enum.Order) ([]Log, error) {
+func (m *MockIRepository) Fetch(roomName string, logType enum.LogType, start, end time.Time, limit int, order enum.Order) ([]Log, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Fetch", logType, start, end, limit, order)
+	ret := m.ctrl.Call(m, "Fetch", roomName, logType, start, end, limit, order)
 	ret0, _ := ret[0].([]Log)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Fetch indicates an expected call of Fetch
-func (mr *MockIRepositoryMockRecorder) Fetch(logType, start, end, limit, order interface{}) *gomock.Call {
+func (mr *MockIRepositoryMockRecorder) Fetch(roomName, logType, start, end, limit, order interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Fetch", reflect.TypeOf((*MockIRepository)(nil).Fetch), logType, start, end, limit, order)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Fetch", reflect.TypeOf((*MockIRepository)(nil).Fetch), roomName, logType, start, end, limit, order)
 }
 
 // FetchRoomNames mocks base method

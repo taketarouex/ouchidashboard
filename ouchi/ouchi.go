@@ -13,7 +13,7 @@ import (
 type (
 	// IOuchi is an interface of the ouchi service
 	IOuchi interface {
-		GetLogs(logType enum.LogType, start, end time.Time, opts ...GetOption) ([]Log, error)
+		GetLogs(roomName string, logType enum.LogType, start, end time.Time, opts ...GetOption) ([]Log, error)
 		GetRoomNames() (roomNames []string, err error)
 	}
 	// Ouchi service
@@ -29,9 +29,9 @@ type (
 	}
 	// IRepository is an interface of repository
 	IRepository interface {
-		SourceID() (string, error)
-		Add([]collector.CollectLog) error
-		Fetch(logType enum.LogType, start, end time.Time, limit int, order enum.Order) ([]Log, error)
+		SourceID(roomName string) (string, error)
+		Add(roomName string, collected []collector.CollectLog) error
+		Fetch(roomName string, logType enum.LogType, start, end time.Time, limit int, order enum.Order) ([]Log, error)
 		FetchRoomNames() (roomNames []string, err error)
 	}
 	// Log ouchi log
@@ -78,7 +78,7 @@ func NewOuchi(repository IRepository) IOuchi {
 }
 
 // GetLogs gets log
-func (o *Ouchi) GetLogs(logType enum.LogType, start, end time.Time, opts ...GetOption) ([]Log, error) {
+func (o *Ouchi) GetLogs(roomName string, logType enum.LogType, start, end time.Time, opts ...GetOption) ([]Log, error) {
 	options := &getOpts{
 		limit: 0,
 		order: enum.Asc,
@@ -87,7 +87,7 @@ func (o *Ouchi) GetLogs(logType enum.LogType, start, end time.Time, opts ...GetO
 		setOpt(options)
 	}
 
-	logs, err := o.repository.Fetch(logType, start, end, options.limit, options.order)
+	logs, err := o.repository.Fetch(roomName, logType, start, end, options.limit, options.order)
 	if err != nil {
 		return nil, err
 	}

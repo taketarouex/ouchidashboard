@@ -34,17 +34,17 @@ func (m *MockICollector) EXPECT() *MockICollectorMockRecorder {
 }
 
 // Collect mocks base method
-func (m *MockICollector) Collect() error {
+func (m *MockICollector) Collect(targetRoomName string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Collect")
+	ret := m.ctrl.Call(m, "Collect", targetRoomName)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Collect indicates an expected call of Collect
-func (mr *MockICollectorMockRecorder) Collect() *gomock.Call {
+func (mr *MockICollectorMockRecorder) Collect(targetRoomName interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Collect", reflect.TypeOf((*MockICollector)(nil).Collect))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Collect", reflect.TypeOf((*MockICollector)(nil).Collect), targetRoomName)
 }
 
 // MockIRepository is a mock of IRepository interface
@@ -71,32 +71,32 @@ func (m *MockIRepository) EXPECT() *MockIRepositoryMockRecorder {
 }
 
 // SourceID mocks base method
-func (m *MockIRepository) SourceID() (string, error) {
+func (m *MockIRepository) SourceID(roomName string) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SourceID")
+	ret := m.ctrl.Call(m, "SourceID", roomName)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // SourceID indicates an expected call of SourceID
-func (mr *MockIRepositoryMockRecorder) SourceID() *gomock.Call {
+func (mr *MockIRepositoryMockRecorder) SourceID(roomName interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SourceID", reflect.TypeOf((*MockIRepository)(nil).SourceID))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SourceID", reflect.TypeOf((*MockIRepository)(nil).SourceID), roomName)
 }
 
 // Add mocks base method
-func (m *MockIRepository) Add(arg0 []CollectLog) error {
+func (m *MockIRepository) Add(roomName string, collected []CollectLog) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Add", arg0)
+	ret := m.ctrl.Call(m, "Add", roomName, collected)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Add indicates an expected call of Add
-func (mr *MockIRepositoryMockRecorder) Add(arg0 interface{}) *gomock.Call {
+func (mr *MockIRepositoryMockRecorder) Add(roomName, collected interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Add", reflect.TypeOf((*MockIRepository)(nil).Add), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Add", reflect.TypeOf((*MockIRepository)(nil).Add), roomName, collected)
 }
 
 // MockTimeInterface is a mock of TimeInterface interface
