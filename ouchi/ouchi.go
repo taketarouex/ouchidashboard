@@ -97,5 +97,9 @@ func (o *Ouchi) GetLogs(logType enum.LogType, start, end time.Time, opts ...GetO
 
 // GetRoomNames gets room names
 func (o *Ouchi) GetRoomNames() (roomNames []string, err error) {
-	return []string{}, nil
+	roomNames, err = o.repository.FetchRoomNames()
+	if err != nil {
+		return nil, err
+	}
+	return roomNames, nil
 }
