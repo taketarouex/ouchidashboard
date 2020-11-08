@@ -1,11 +1,11 @@
 import Head from 'next/head'
 import Layout, { siteTitle } from '../components/layout'
-import { RoomChart } from '../components/roomChart'
+import { RoomInfo } from '../components/RoomInfo'
 import dayjs from 'dayjs'
 
 export default function Home() {
-  const start = dayjs("2020-01-23T00:00:00Z")
-  const end = dayjs("2020-01-23T04:00:00Z")
+  const start = dayjs().set('hour', 0).set('minute', 0).set('second', 0).set('millisecond', 0);
+  const end = start.add(1, 'day');
   return (
     <Layout home>
       <Head>
@@ -13,7 +13,7 @@ export default function Home() {
       </Head>
       <section>
         <h1>{siteTitle}</h1>
-        <RoomChart roomName={"testRoom"} logType={"temperature"} start={start} end={end} />
+        <RoomInfo logType={"temperature"} start={start} end={end} />
       </section>
     </Layout>
   )
