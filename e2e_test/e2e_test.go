@@ -254,7 +254,7 @@ func TestOuchi_E2E(t *testing.T) {
 			t.Errorf("failed to http get due to: %v", err)
 		}
 		if resp.StatusCode != 200 {
-			t.Errorf("failed to get logs due to: %v", resp.Status)
+			t.Errorf("failed to get room names due to: %v", resp.Status)
 		}
 		defer resp.Body.Close()
 		body, err := ioutil.ReadAll(resp.Body)

@@ -1,5 +1,3 @@
-// +build integration
-
 package repository
 
 import (
@@ -31,7 +29,7 @@ func TestRepository(t *testing.T) {
 	// setup test data
 	doc, _, err := client.Collection(rootPath).Add(ctx, map[string]string{"sourceID": sourceID})
 	if err != nil {
-		t.Fatalf("failed to create test data")
+		t.Fatalf("failed to create test data due to: %v", err)
 	}
 
 	ctrl := gomock.NewController(t)

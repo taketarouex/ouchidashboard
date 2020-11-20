@@ -13,7 +13,7 @@ build/run_server:
 	go build -o build/. cmd/run_server.go cmd/handler.go
 
 integration_test:
-	go test --tags=integration ./collector
+	go test --tags=integration ./repository
 
 e2e_test:
 	go test ./e2e_test
