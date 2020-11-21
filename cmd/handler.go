@@ -32,6 +32,7 @@ func getRoomNamesHandler(c echo.Context) error {
 
 	repository, err := repository.NewRepository(firestoreClient, rootPath, &collector.NowTime{})
 	if err != nil {
+		log.Printf("failed to create repository due to: %v", err)
 		return echo.ErrInternalServerError
 	}
 
@@ -39,6 +40,7 @@ func getRoomNamesHandler(c echo.Context) error {
 
 	roomNames, err := service.GetRoomNames()
 	if err != nil {
+		log.Printf("failed to get room names due to: %v", err)
 		return echo.ErrInternalServerError
 	}
 	return c.JSON(http.StatusOK, roomNames)
