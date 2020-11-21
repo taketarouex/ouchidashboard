@@ -272,7 +272,7 @@ func TestOuchi_E2E(t *testing.T) {
 	})
 
 	// delete test data
-	if _, err = client.Doc(fmt.Sprintf("%s/%s", rootPath, roomName)).Delete(ctx); err != nil {
-		t.Fatalf("failed to delete test data")
-	}
+	//if _, err = client.Doc(fmt.Sprintf("%s/%s", rootPath, roomName)).Delete(ctx); err != nil {
+	//	t.Fatalf("failed to delete test data")
+	//}
 }
