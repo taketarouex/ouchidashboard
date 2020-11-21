@@ -10,6 +10,7 @@ import (
 	"github.com/tktkc72/ouchidashboard/collector"
 	"github.com/tktkc72/ouchidashboard/enum"
 	"github.com/tktkc72/ouchidashboard/ouchi"
+	"google.golang.org/api/iterator"
 )
 
 type (
@@ -132,11 +133,16 @@ func parse(docs []*firestore.DocumentSnapshot) []ouchi.Log {
 
 func (r *Repository) FetchRoomNames() (roomNames []string, err error) {
 	ctx := context.Background()
-	roomDocs, err := r.rootCollection.DocumentRefs(ctx).GetAll()
-	if err != nil {
-		return nil, err
-	}
-	for _, roomDoc := range roomDocs {
+	documentRefs := r.rootCollection.DocumentRefs(ctx)
+	roomNames = []string{}
+	for {
+		roomDoc, err := documentRefs.Next()
+		if err != nil {
+			if err == iterator.Done {
+				break
+			}
+			return nil, err
+		}
 		roomNames = append(roomNames, roomDoc.ID)
 	}
 	return roomNames, nil
