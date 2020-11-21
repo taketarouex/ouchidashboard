@@ -1,6 +1,6 @@
 module github.com/tktkc72/ouchidashboard
 
-go 1.14
+go 1.15
 
 require (
 	cloud.google.com/go v0.65.0 // indirect
@@ -18,4 +18,5 @@ require (
 	golang.org/x/net v0.0.0-20200904194848-62affa334b73 // indirect
 	golang.org/x/sys v0.0.0-20200909081042-eff7692f9009 // indirect
 	golang.org/x/tools v0.0.0-20200911193555-6422fca01df9 // indirect
+	google.golang.org/api v0.30.0
 )

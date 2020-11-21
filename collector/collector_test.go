@@ -24,19 +24,19 @@ func TestCollector_Collect(t *testing.T) {
 		fetcher.EXPECT().fetch("testID").Return(collectLogs, nil)
 
 		repository := NewMockIRepository(ctrl)
-		repository.EXPECT().SourceID().Return("testID", nil)
-		repository.EXPECT().Add(collectLogs).Return(nil)
+		repository.EXPECT().SourceID("test").Return("testID", nil)
+		repository.EXPECT().Add("test", collectLogs).Return(nil)
 		service := NewCollectorService(fetcher, repository)
-		if err := service.Collect(); err != nil {
+		if err := service.Collect("test"); err != nil {
 			t.Error("fail to collect")
 		}
 	})
 	t.Run("error get sourceID", func(t *testing.T) {
 		fetcher := NewMockIFetcher(ctrl)
 		repository := NewMockIRepository(ctrl)
-		repository.EXPECT().SourceID().Return("", errors.Errorf("fail to get sourceID"))
+		repository.EXPECT().SourceID("test").Return("", errors.Errorf("fail to get sourceID"))
 		service := NewCollectorService(fetcher, repository)
-		if err := service.Collect(); err == nil || err.Error() != "fail to get sourceID" {
+		if err := service.Collect("test"); err == nil || err.Error() != "fail to get sourceID" {
 			t.Errorf("expect fail to get sourceID but err: %v", err)
 		}
 	})
@@ -44,9 +44,9 @@ func TestCollector_Collect(t *testing.T) {
 		fetcher := NewMockIFetcher(ctrl)
 		fetcher.EXPECT().fetch("testID").Return(nil, errors.Errorf("fail to fetch"))
 		repository := NewMockIRepository(ctrl)
-		repository.EXPECT().SourceID().Return("testID", nil)
+		repository.EXPECT().SourceID("test").Return("testID", nil)
 		service := NewCollectorService(fetcher, repository)
-		if err := service.Collect(); err == nil || err.Error() != "fail to fetch" {
+		if err := service.Collect("test"); err == nil || err.Error() != "fail to fetch" {
 			t.Errorf("expect fail to fetch but err: %v", err)
 		}
 	})
@@ -60,10 +60,10 @@ func TestCollector_Collect(t *testing.T) {
 		fetcher := NewMockIFetcher(ctrl)
 		fetcher.EXPECT().fetch("testID").Return(collectLogs, nil)
 		repository := NewMockIRepository(ctrl)
-		repository.EXPECT().SourceID().Return("testID", nil)
-		repository.EXPECT().Add(collectLogs).Return(errors.Errorf("fail to add"))
+		repository.EXPECT().SourceID("test").Return("testID", nil)
+		repository.EXPECT().Add("test", collectLogs).Return(errors.Errorf("fail to add"))
 		service := NewCollectorService(fetcher, repository)
-		if err := service.Collect(); err == nil || err.Error() != "fail to add" {
+		if err := service.Collect("test"); err == nil || err.Error() != "fail to add" {
 			t.Errorf("expect fail to add but err: %v", err)
 		}
 	})

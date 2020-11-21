@@ -10,56 +10,70 @@ import (
 	"github.com/tktkc72/ouchidashboard/collector"
 	"github.com/tktkc72/ouchidashboard/enum"
 	"github.com/tktkc72/ouchidashboard/ouchi"
+	"google.golang.org/api/iterator"
 )
 
 type (
 	// Repository data store
 	Repository struct {
 		rootCollection *firestore.CollectionRef
-		documentRef    *firestore.DocumentRef
-		documentSnap   *firestore.DocumentSnapshot
 		time           collector.TimeInterface
 	}
 )
 
 // NewRepository creates repository which has the name specified
-func NewRepository(client *firestore.Client, rootPath, roomName string, time collector.TimeInterface) (ouchi.IRepository, error) {
-	ctx := context.Background()
-	ref := client.Collection(rootPath).Doc(roomName)
-	snap, err := ref.Get(ctx)
-	if err != nil {
-		return nil, err
-	}
-	if !snap.Exists() {
-		return nil, &ouchi.NoRoomErr{S: fmt.Sprintf("no room name: %s", roomName)}
-	}
+func NewRepository(client *firestore.Client, rootPath string, time collector.TimeInterface) (ouchi.IRepository, error) {
 	return &Repository{
 		rootCollection: client.Collection(rootPath),
-		documentRef:    ref,
-		documentSnap:   snap,
 		time:           time,
 	}, nil
 }
 
 // SourceID gets a sourceID at the root document
-func (r *Repository) SourceID() (string, error) {
-	sourceID, err := r.documentSnap.DataAt("sourceID")
+func (r *Repository) SourceID(roomName string) (string, error) {
+	ctx := context.Background()
+	ref := r.rootCollection.Doc(roomName)
+	snap, err := ref.Get(ctx)
+	if err != nil {
+		return "", err
+	}
+	if !snap.Exists() {
+		return "", &ouchi.NoRoomErr{S: fmt.Sprintf("no room name: %s", roomName)}
+	}
+
+	sourceID, err := snap.DataAt("sourceID")
 	if err != nil {
 		return "", err
 	}
 	return sourceID.(string), nil
 }
 
-// Add adds CollectLogs to repository
-func (r *Repository) Add(collectLogs []collector.CollectLog) error {
+func (r *Repository) existRoom(roomName string) error {
 	ctx := context.Background()
+	ref := r.rootCollection.Doc(roomName)
+	_, err := ref.Get(ctx)
+	if err != nil {
+		return &ouchi.NoRoomErr{S: fmt.Sprintf("no room name: %s", roomName)}
+	}
+	return nil
+}
+
+// Add adds CollectLogs to repository
+func (r *Repository) Add(roomName string, collectLogs []collector.CollectLog) error {
+	err := r.existRoom(roomName)
+	if err != nil {
+		return err
+	}
+
+	ctx := context.Background()
+	ref := r.rootCollection.Doc(roomName)
 	for _, c := range collectLogs {
 		o := ouchi.Log{
 			Value:     c.Value,
 			UpdatedAt: c.UpdatedAt,
 			CreatedAt: r.time.Now(),
 		}
-		_, _, err := r.documentRef.Collection(c.LogType.String()).Add(ctx, o)
+		_, _, err := ref.Collection(c.LogType.String()).Add(ctx, o)
 		if err != nil {
 			return err
 		}
@@ -70,11 +84,19 @@ func (r *Repository) Add(collectLogs []collector.CollectLog) error {
 
 // Fetch fetches logs from repository
 func (r *Repository) Fetch(
+	roomName string,
 	logType enum.LogType,
 	start, end time.Time,
 	limit int, order enum.Order) ([]ouchi.Log, error) {
+	err := r.existRoom(roomName)
+	if err != nil {
+		return nil, err
+	}
 
-	collection := r.documentRef.Collection(logType.String())
+	ctx := context.Background()
+	ref := r.rootCollection.Doc(roomName)
+
+	collection := ref.Collection(logType.String())
 	if collection == nil {
 		return nil, errors.Errorf("no collection type: %s", logType.String())
 	}
@@ -88,7 +110,6 @@ func (r *Repository) Fetch(
 	if limit > 0 {
 		query = query.Limit(limit)
 	}
-	ctx := context.Background()
 	docs, err := query.Documents(ctx).GetAll()
 	if err != nil {
 		return nil, errors.Errorf("failed to get documents due to: %v", err)
@@ -108,4 +129,21 @@ func parse(docs []*firestore.DocumentSnapshot) []ouchi.Log {
 		parsed = append(parsed, log)
 	}
 	return parsed
+}
+
+func (r *Repository) FetchRoomNames() (roomNames []string, err error) {
+	ctx := context.Background()
+	documentRefs := r.rootCollection.DocumentRefs(ctx)
+	roomNames = []string{}
+	for {
+		roomDoc, err := documentRefs.Next()
+		if err != nil {
+			if err == iterator.Done {
+				break
+			}
+			return nil, err
+		}
+		roomNames = append(roomNames, roomDoc.ID)
+	}
+	return roomNames, nil
 }

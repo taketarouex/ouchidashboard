@@ -15,7 +15,7 @@ import (
 type (
 	// ICollector is an interface of the collector service
 	ICollector interface {
-		Collect() error
+		Collect(targetRoomName string) error
 	}
 	// Sevice collector service
 	Sevice struct {
@@ -45,8 +45,8 @@ func NewCollectorService(fetcher IFetcher, repository IRepository) ICollector {
 }
 
 // Collect is a use case
-func (s *Sevice) Collect() error {
-	sourceID, err := s.repository.SourceID()
+func (s *Sevice) Collect(targetRoomName string) error {
+	sourceID, err := s.repository.SourceID(targetRoomName)
 	if err != nil {
 		return err
 	}
@@ -56,7 +56,7 @@ func (s *Sevice) Collect() error {
 		return err
 	}
 
-	err = s.repository.Add(collected)
+	err = s.repository.Add(targetRoomName, collected)
 	if err != nil {
 		return err
 	}
@@ -67,8 +67,8 @@ func (s *Sevice) Collect() error {
 type (
 	// IRepository is an interface of repository
 	IRepository interface {
-		SourceID() (string, error)
-		Add([]CollectLog) error
+		SourceID(roomName string) (string, error)
+		Add(roomName string, collected []CollectLog) error
 	}
 	// NowTime is a utility to return current time
 	NowTime struct{}

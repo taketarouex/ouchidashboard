@@ -1,5 +1,3 @@
-// +build integration
-
 package repository
 
 import (
@@ -31,7 +29,7 @@ func TestRepository(t *testing.T) {
 	// setup test data
 	doc, _, err := client.Collection(rootPath).Add(ctx, map[string]string{"sourceID": sourceID})
 	if err != nil {
-		t.Fatalf("failed to create test data")
+		t.Fatalf("failed to create test data due to: %v", err)
 	}
 
 	ctrl := gomock.NewController(t)
@@ -39,12 +37,12 @@ func TestRepository(t *testing.T) {
 	mockTime := collector.NewMockTimeInterface(ctrl)
 	mockNow := time.Date(2020, 7, 31, 10, 0, 0, 0, time.Local)
 	mockTime.EXPECT().Now().AnyTimes().Return(mockNow)
-	repository, err := NewRepository(client, rootPath, doc.ID, mockTime)
+	repository, err := NewRepository(client, rootPath, mockTime)
 	if err != nil {
 		t.Fatalf("failed to create repository because of: %v", err)
 	}
 
-	gotSourceID, err := repository.SourceID()
+	gotSourceID, err := repository.SourceID(doc.ID)
 	if err != nil {
 		t.Error("failed to get sourceID")
 	}
@@ -59,7 +57,7 @@ func TestRepository(t *testing.T) {
 		{Value: 3, UpdatedAt: time.Date(2020, 7, 31, 3, 0, 0, 0, time.Local), LogType: enum.Motion, SourceID: "test"},
 	}
 
-	if err = repository.Add(collectLogs); err != nil {
+	if err = repository.Add(doc.ID, collectLogs); err != nil {
 		t.Fatalf("error: %v", err)
 	}
 
@@ -88,6 +86,15 @@ func TestRepository(t *testing.T) {
 
 	if !cmp.Equal(expected, fetched) {
 		t.Errorf("expected: %v, got: %v", expected, fetched[0])
+	}
+
+	fetchedRoomNames, err := repository.FetchRoomNames()
+	if err != nil {
+		t.Errorf("failed to fetch room names due to %v", err)
+	}
+
+	if !cmp.Equal([]string{doc.ID}, fetchedRoomNames) {
+		t.Errorf("expected: %v, got: %v", []string{doc.ID}, fetchedRoomNames)
 	}
 
 	// delete test data

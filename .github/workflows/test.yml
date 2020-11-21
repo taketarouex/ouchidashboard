@@ -34,7 +34,11 @@ jobs:
           FIRESTORE_EMULATOR_HOST: localhost:8812
           FIRESTORE_ROOT_PATH: test
           GCP_PROJECT: test
+          SKIP_TEST: ci
         run: make e2e_test
+      - name: docker log on failure
+        if: failure()
+        run: docker-compose logs
   frontend_test:
     name: Frontend Test
     runs-on: ubuntu-latest
