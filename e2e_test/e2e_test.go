@@ -244,7 +244,9 @@ func TestOuchi_E2E(t *testing.T) {
 		}
 	})
 	t.Run("success to get room names", func(t *testing.T) {
-		t.SkipNow()
+		if os.Getenv("SKIP_TEST") == "ci" {
+			t.SkipNow()
+		}
 		apiUrl, err := url.Parse(baseUrl)
 		if err != nil {
 			t.Fatalf("failed to parse url %v", err)
