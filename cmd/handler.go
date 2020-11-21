@@ -10,6 +10,7 @@ import (
 
 	"cloud.google.com/go/firestore"
 	"github.com/labstack/echo"
+	"github.com/pkg/errors"
 	"github.com/tenntenn/natureremo"
 	"github.com/tktkc72/ouchidashboard/collector"
 	"github.com/tktkc72/ouchidashboard/enum"
@@ -40,7 +41,7 @@ func getRoomNamesHandler(c echo.Context) error {
 
 	roomNames, err := service.GetRoomNames()
 	if err != nil {
-		log.Printf("failed to get room names due to: %v", err)
+		log.Printf("failed to get room names due to: %v", errors.WithStack(err))
 		return echo.ErrInternalServerError
 	}
 	return c.JSON(http.StatusOK, roomNames)
