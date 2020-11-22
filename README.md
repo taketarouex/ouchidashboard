@@ -45,14 +45,11 @@ And set the access token and the device id to environments.
 
 [Continuous deployment from Git using Cloud Build](https://cloud.google.com/run/docs/continuous-deployment-with-cloud-build?hl=ja#new-service)
 
-## Todo
+## firebase deploy
 
-- [x] e2e test
-- [x] bad request
-- [x] code ci from github
-- [ ] fetcher test
-- [x] firestore path
-- [x] room name request
+need to install firebase CLI
+
+`firebase deploy`
 
 ## setup
 
