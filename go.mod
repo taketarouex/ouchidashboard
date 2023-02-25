@@ -16,7 +16,7 @@ require (
 	github.com/valyala/fasttemplate v1.2.1 // indirect
 	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a // indirect
 	golang.org/x/net v0.0.0-20200904194848-62affa334b73 // indirect
-	golang.org/x/sys v0.0.0-20200909081042-eff7692f9009 // indirect
+	golang.org/x/sys v0.1.0 // indirect
 	golang.org/x/tools v0.0.0-20200911193555-6422fca01df9 // indirect
 	google.golang.org/api v0.30.0
 )
